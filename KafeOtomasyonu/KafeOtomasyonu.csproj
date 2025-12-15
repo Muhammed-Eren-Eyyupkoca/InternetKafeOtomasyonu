@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon></ApplicationIcon>
+    <StartupObject>KafeOtomasyonu.Program</StartupObject>
+    <RootNamespace>KafeOtomasyonu</RootNamespace>
+    <AssemblyName>KafeOtomasyonu</AssemblyName>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- DevExpress 25.1 Paketleri -->
+    <PackageReference Include="DevExpress.Win.Design" Version="25.1.5" />
+    
+    <!-- SQL Server Bağlantısı için -->
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    
+    <!-- Configuration Manager (App.config okumak için) -->
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- App.config dosyasını kopyala -->
+    <None Update="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Masa resimleri için Resources klasörü -->
+    <None Update="Resources\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

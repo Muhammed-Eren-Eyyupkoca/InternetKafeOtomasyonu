@@ -20,7 +20,7 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     
     <!-- Configuration Manager (App.config okumak için) -->
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using KafeOtomasyonu.Forms;
 
 namespace KafeOtomasyonu
 {
@@ -18,7 +19,9 @@ namespace KafeOtomasyonu
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            
+            // LoginForm ile başlat
+            Application.Run(new LoginForm());
         }
     }
 }

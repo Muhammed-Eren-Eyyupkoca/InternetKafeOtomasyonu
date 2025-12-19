@@ -199,6 +199,17 @@ $RECYCLE.BIN/
 # User-specific files
 *.userprefs
 
+# User Settings (Beni Hatırla vb.)
+**/Properties/Settings.settings
+!**/Properties/Settings.Designer.cs
+
+# Temporary files
+*.tmp
+*.temp
+
+# Database backup files
+*.bak
+
 # Mono auto generated files
 mono_crash.*
 

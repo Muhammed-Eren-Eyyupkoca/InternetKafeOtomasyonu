@@ -22,7 +22,7 @@ namespace KafeOtomasyonu.Helpers
                 if (string.IsNullOrEmpty(_connectionString))
                 {
                     _connectionString = ConfigurationManager.ConnectionStrings["KafeOtomasyonuDB"]?.ConnectionString
-                        ?? "Server=localhost;Database=KafeOtomasyonuDB;Integrated Security=True;TrustServerCertificate=True;";
+                        ?? "Server=localhost\\SQLEXPRESS;Database=KafeOtomasyonuDB;Integrated Security=True;TrustServerCertificate=True;";
                 }
                 return _connectionString;
             }

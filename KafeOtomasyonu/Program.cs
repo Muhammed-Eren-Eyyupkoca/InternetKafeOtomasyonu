@@ -17,6 +17,8 @@ namespace KafeOtomasyonu
         [STAThread]
         static void Main()
         {
+            // Yüksek DPI desteği
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             

@@ -48,6 +48,24 @@
 
 ---
 
+## 📌 4. Güncelleme
+
+**Masa Yönetim Sistemi ve Admin Paneli:**
+
+- 25 masalı görsel sistem (üst 10, alt 10, sağ 5, sol boş-giriş)
+- Renk kodlu durum sistemi (yeşil: boş, turuncu: rezerve, kırmızı: dolu)
+- Her masada puan ortalaması ve yıldız gösterimi
+- Masaya tıklayınca detay ekranı açılıyor
+- 5 yıldız puanlama sistemi
+- Yorum yapma ve görüntüleme
+- Randevu oluşturma sistemi (tarih, saat, ücret hesaplama)
+- Çakışma kontrolü
+- Otomatik masa durumu güncelleme (30 saniye)
+- Admin paneli (kullanıcı blokla, masa durumu değiştir, randevu onayla)
+- Admin girişi checkbox ile (admin/admin123)
+
+---
+
 **Geliştirici:** Muhammed Eren Eyyüpkoca
 
 ---

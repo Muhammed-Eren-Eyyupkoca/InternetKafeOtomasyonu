@@ -10,11 +10,13 @@ namespace KafeOtomasyonu.Forms
     public partial class LoginForm : XtraForm
     {
         private readonly KullaniciRepository _kullaniciRepository;
+        private readonly AdminRepository _adminRepository;
 
         public LoginForm()
         {
             InitializeComponent();
             _kullaniciRepository = new KullaniciRepository();
+            _adminRepository = new AdminRepository();
             
             // Form ayarları
             this.Text = "Giriş Yap";
@@ -47,42 +49,160 @@ namespace KafeOtomasyonu.Forms
 
             try
             {
-                // Giriş kontrolü
-                var kullanici = _kullaniciRepository.Login(txtKullaniciAdi.Text.Trim(), txtSifre.Text);
-
-                if (kullanici != null)
+                // Admin girişi mi kontrol et
+                if (chkAdminGirisi != null && chkAdminGirisi.Checked)
                 {
-                    // Bloklu kullanıcı kontrolü
-                    if (kullanici.Bloklu)
+                    AdminGirisi();
+                }
+                else
+                {
+                    KullaniciGirisi();
+                }
+            }
+            catch (Exception ex)
+            {
+                XtraMessageBox.Show(
+                    $"Giriş yapılırken bir hata oluştu:\n{ex.Message}",
+                    "Hata",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+        }
+
+        /// <summary>
+        /// Kullanıcı girişi
+        /// </summary>
+        private void KullaniciGirisi()
+        {
+            var kullanici = _kullaniciRepository.Login(txtKullaniciAdi.Text.Trim(), txtSifre.Text);
+
+            if (kullanici != null)
+            {
+                // Bloklu kullanıcı kontrolü
+                if (kullanici.Bloklu)
+                {
+                    ShowModernNotification(
+                        $"Hesabınız bloklanmıştır!\n\nNeden: {kullanici.BlokNedeni}\n\nLütfen yönetici ile iletişime geçin.",
+                        "Hesap Bloklu",
+                        false
+                    );
+                    return;
+                }
+
+                // Oturum aç
+                SessionManager.LoginUser(kullanici);
+
+                // Beni hatırla
+                if (chkBeniHatirla.Checked)
+                {
+                    Properties.Settings.Default.RememberMe = true;
+                    Properties.Settings.Default.SavedUsername = txtKullaniciAdi.Text.Trim();
+                    Properties.Settings.Default.Save();
+                }
+                else
+                {
+                    Properties.Settings.Default.RememberMe = false;
+                    Properties.Settings.Default.SavedUsername = string.Empty;
+                    Properties.Settings.Default.Save();
+                }
+
+                ShowModernNotification(
+                    $"Hoş geldiniz, {kullanici.AdSoyad}!",
+                    "Giriş Başarılı",
+                    true
+                );
+
+                // Animasyon için kısa bekleme
+                System.Threading.Tasks.Task.Delay(1500).ContinueWith(_ =>
+                {
+                    this.Invoke((MethodInvoker)delegate
                     {
-                        ShowModernNotification(
-                            $"Hesabınız bloklanmıştır!\n\nNeden: {kullanici.BlokNedeni}\n\nLütfen yönetici ile iletişime geçin.",
-                            "Hesap Bloklu",
-                            false
+                        // Ana forma geç
+                        this.Hide();
+                        MasaListesiForm mainForm = new MasaListesiForm();
+                        mainForm.FormClosed += (s, args) => this.Close();
+                        mainForm.Show();
+                    });
+                });
+            }
+            else
+            {
+                XtraMessageBox.Show(
+                    "Kullanıcı adı veya şifre hatalı!",
+                    "Hata",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                txtSifre.Clear();
+                txtKullaniciAdi.Focus();
+            }
+        }
+
+        /// <summary>
+        /// Admin girişi
+        /// </summary>
+        private void AdminGirisi()
+        {
+            try
+            {
+                // Debug: Hash'i kontrol et
+                string girisHash = DatabaseHelper.HashPassword(txtSifre.Text);
+                
+                // Debug: Veritabanında admin var mı kontrol et
+                string checkQuery = "SELECT COUNT(*), Sifre FROM Adminler WHERE AdminAdi = @AdminAdi GROUP BY Sifre";
+                var checkParams = DatabaseHelper.CreateParameters(("@AdminAdi", txtKullaniciAdi.Text.Trim()));
+                var dt = DatabaseHelper.ExecuteQuery(checkQuery, checkParams);
+                
+                if (dt.Rows.Count == 0)
+                {
+                    XtraMessageBox.Show(
+                        $"'{txtKullaniciAdi.Text}' adında admin bulunamadı!\n\nSQL scriptini çalıştırdınız mı?",
+                        "Admin Bulunamadı",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    return;
+                }
+                
+                string dbHash = dt.Rows[0]["Sifre"].ToString();
+                
+                if (girisHash != dbHash)
+                {
+                    XtraMessageBox.Show(
+                        $"Şifre hash'leri uyuşmuyor!\n\n" +
+                        $"Girdiğiniz şifrenin hash'i:\n{girisHash}\n\n" +
+                        $"Veritabanındaki hash:\n{dbHash}\n\n" +
+                        $"Şifre: admin123 olmalı",
+                        "Hash Uyuşmazlığı",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    return;
+                }
+
+                var admin = _adminRepository.Login(txtKullaniciAdi.Text.Trim(), txtSifre.Text);
+
+                if (admin != null)
+                {
+                    // Aktif kontrol
+                    if (!admin.Aktif)
+                    {
+                        XtraMessageBox.Show(
+                            "Admin hesabınız devre dışı bırakılmış!",
+                            "Erişim Engellendi",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
                         );
                         return;
                     }
 
                     // Oturum aç
-                    SessionManager.LoginUser(kullanici);
-
-                    // Beni hatırla
-                    if (chkBeniHatirla.Checked)
-                    {
-                        Properties.Settings.Default.RememberMe = true;
-                        Properties.Settings.Default.SavedUsername = txtKullaniciAdi.Text.Trim();
-                        Properties.Settings.Default.Save();
-                    }
-                    else
-                    {
-                        Properties.Settings.Default.RememberMe = false;
-                        Properties.Settings.Default.SavedUsername = string.Empty;
-                        Properties.Settings.Default.Save();
-                    }
+                    SessionManager.LoginAdmin(admin);
 
                     ShowModernNotification(
-                        $"Hoş geldiniz, {kullanici.AdSoyad}!",
-                        "Giriş Başarılı",
+                        $"Hoş geldiniz Admin, {admin.AdSoyad}!",
+                        "Admin Girişi Başarılı",
                         true
                     );
 
@@ -91,19 +211,19 @@ namespace KafeOtomasyonu.Forms
                     {
                         this.Invoke((MethodInvoker)delegate
                         {
-                            // Ana forma geç
+                            // Admin paneline geç
                             this.Hide();
-                            Form1 mainForm = new Form1();
-                            mainForm.FormClosed += (s, args) => this.Close();
-                            mainForm.Show();
+                            AdminPanelForm adminPanel = new AdminPanelForm();
+                            adminPanel.FormClosed += (s, args) => this.Close();
+                            adminPanel.Show();
                         });
                     });
                 }
                 else
                 {
                     XtraMessageBox.Show(
-                        "Kullanıcı adı veya şifre hatalı!",
-                        "Hata",
+                        "Admin kullanıcı adı veya şifre hatalı!\n\nAdmin: admin\nŞifre: admin123",
+                        "Giriş Hatası",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
                     );
@@ -114,7 +234,7 @@ namespace KafeOtomasyonu.Forms
             catch (Exception ex)
             {
                 XtraMessageBox.Show(
-                    $"Giriş yapılırken bir hata oluştu:\n{ex.Message}",
+                    $"Admin girişi sırasında hata:\n\n{ex.Message}",
                     "Hata",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
@@ -135,6 +255,28 @@ namespace KafeOtomasyonu.Forms
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
+            // Admin yoksa oluştur (tek seferlik)
+            try
+            {
+                string checkQuery = "SELECT COUNT(*) FROM Adminler WHERE AdminAdi = 'admin'";
+                int count = Convert.ToInt32(DatabaseHelper.ExecuteScalar(checkQuery));
+                
+                if (count == 0)
+                {
+                    // Admin yok, oluştur
+                    string insertQuery = @"INSERT INTO Adminler (AdminAdi, Sifre, AdSoyad, Email, Aktif) 
+                                         VALUES ('admin', '240BE518FABD2724DDB6F04EEB1DA5967448D7E831C08C8FA822809F74C720A9', 'Sistem Admini', 'admin@kafeotomasyon.com', 1)";
+                    DatabaseHelper.ExecuteNonQuery(insertQuery);
+                }
+                else
+                {
+                    // Admin var, hash'ini düzelt
+                    string updateQuery = "UPDATE Adminler SET Sifre = '240BE518FABD2724DDB6F04EEB1DA5967448D7E831C08C8FA822809F74C720A9' WHERE AdminAdi = 'admin' AND Sifre != '240BE518FABD2724DDB6F04EEB1DA5967448D7E831C08C8FA822809F74C720A9'";
+                    DatabaseHelper.ExecuteNonQuery(updateQuery);
+                }
+            }
+            catch { /* Sessizce geç */ }
+
             // Paneli ekranın tam ortasına yerleştir
             panelContainer.Location = new Point(
                 (this.ClientSize.Width - panelContainer.Width) / 2,

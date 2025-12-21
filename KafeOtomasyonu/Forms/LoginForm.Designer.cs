@@ -14,6 +14,7 @@ namespace KafeOtomasyonu.Forms
         private LabelControl lblSifre;
         private TextEdit txtSifre;
         private CheckEdit chkBeniHatirla;
+        private CheckEdit chkAdminGirisi;
         private SimpleButton btnGirisYap;
         private HyperlinkLabelControl linkKayitOl;
         private PictureEdit pictureEdit1;
@@ -37,6 +38,7 @@ namespace KafeOtomasyonu.Forms
             this.lblSifre = new DevExpress.XtraEditors.LabelControl();
             this.txtSifre = new DevExpress.XtraEditors.TextEdit();
             this.chkBeniHatirla = new DevExpress.XtraEditors.CheckEdit();
+            this.chkAdminGirisi = new DevExpress.XtraEditors.CheckEdit();
             this.btnGirisYap = new DevExpress.XtraEditors.SimpleButton();
             this.linkKayitOl = new DevExpress.XtraEditors.HyperlinkLabelControl();
             ((System.ComponentModel.ISupportInitialize)(this.panelContainer)).BeginInit();
@@ -45,6 +47,7 @@ namespace KafeOtomasyonu.Forms
             ((System.ComponentModel.ISupportInitialize)(this.txtKullaniciAdi.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtSifre.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkBeniHatirla.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkAdminGirisi.Properties)).BeginInit();
             this.SuspendLayout();
             
             // 
@@ -59,6 +62,7 @@ namespace KafeOtomasyonu.Forms
             this.panelContainer.Controls.Add(this.lblSifre);
             this.panelContainer.Controls.Add(this.txtSifre);
             this.panelContainer.Controls.Add(this.chkBeniHatirla);
+            this.panelContainer.Controls.Add(this.chkAdminGirisi);
             this.panelContainer.Controls.Add(this.btnGirisYap);
             this.panelContainer.Controls.Add(this.linkKayitOl);
             this.panelContainer.Anchor = AnchorStyles.None;
@@ -160,6 +164,19 @@ namespace KafeOtomasyonu.Forms
             this.chkBeniHatirla.TabIndex = 2;
             
             // 
+            // chkAdminGirisi
+            // 
+            this.chkAdminGirisi.Location = new Point(220, 320);
+            this.chkAdminGirisi.Name = "chkAdminGirisi";
+            this.chkAdminGirisi.Properties.Appearance.Font = new Font("Segoe UI", 10F);
+            this.chkAdminGirisi.Properties.Appearance.ForeColor = Color.FromArgb(244, 67, 54);
+            this.chkAdminGirisi.Properties.Appearance.Options.UseFont = true;
+            this.chkAdminGirisi.Properties.Appearance.Options.UseForeColor = true;
+            this.chkAdminGirisi.Properties.Caption = "Admin Girişi";
+            this.chkAdminGirisi.Size = new Size(155, 22);
+            this.chkAdminGirisi.TabIndex = 8;
+            
+            // 
             // btnGirisYap
             // 
             this.btnGirisYap.Appearance.BackColor = ColorTranslator.FromHtml("#40E0D0");
@@ -210,6 +227,7 @@ namespace KafeOtomasyonu.Forms
             ((System.ComponentModel.ISupportInitialize)(this.txtKullaniciAdi.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtSifre.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chkBeniHatirla.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chkAdminGirisi.Properties)).EndInit();
             this.ResumeLayout(false);
         }
     }

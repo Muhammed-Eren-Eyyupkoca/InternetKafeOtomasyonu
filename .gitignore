@@ -227,7 +227,15 @@ $RECYCLE.BIN/
 # Masa resimleri hariç Resources klasörü
 # Resources/
 
+# Proje dışı dokümanlar (opsiyonel - isterseniz bunları pushlayabilirsiniz)
+# ADIM_4_OZET.md
+# KULLANIM_KILAVUZU.md
+
 # Logs
 *.log
 npm-debug.log*
+
+# Geçici notlar
+TODO.txt
+NOTES.txt
 

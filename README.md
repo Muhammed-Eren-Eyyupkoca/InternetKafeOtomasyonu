@@ -66,6 +66,23 @@
 
 ---
 
+## 📌 5. Güncelleme
+
+**Gelişmiş Randevu Sistemi:**
+
+- DevExpress DateEdit ile tarih seçimi
+- DevExpress TimeEdit ile başlangıç saati seçimi
+- DevExpress SpinEdit ile kaç saat kullanılacağı seçimi (1-12 saat)
+- Saatlik ücret 75 TL olarak güncellendi
+- Otomatik ücret hesaplama ve anlık gösterim
+- Gelişmiş randevu çakışma kontrolü
+- Geçmiş tarih ve saat kontrolü
+- Gece yarısını geçen randevu kontrolü
+- Randevu onay ekranı ile detaylı bilgi gösterimi
+- Başarılı randevu sonrası bilgilendirme mesajı
+
+---
+
 **Geliştirici:** Muhammed Eren Eyyüpkoca
 
 ---

@@ -14,6 +14,7 @@ namespace KafeOtomasyonu.Forms
         private readonly Masa _masa;
         private readonly RandevuRepository _randevuRepository;
         private readonly MasaRepository _masaRepository;
+        private const decimal SAATLIK_UCRET = 75m; // Saatlik ücret 75 TL
 
         public RandevuDialogForm(Masa masa)
         {
@@ -26,22 +27,22 @@ namespace KafeOtomasyonu.Forms
         private void RandevuDialogForm_Load(object sender, EventArgs e)
         {
             lblMasaAdi.Text = _masa.MasaAdi ?? $"Masa {_masa.MasaNo}";
-            lblSaatlikUcret.Text = $"Saatlik Ücret: {_masa.SaatlikUcret:C}";
+            lblSaatlikUcret.Text = $"Saatlik Ücret: {SAATLIK_UCRET:C}";
 
             // Tarih seçiciyi ayarla - bugünden itibaren seçilebilir
             dateRandevu.Properties.MinValue = DateTime.Today;
             dateRandevu.EditValue = DateTime.Today;
 
-            // Saat seçicileri ayarla
+            // Başlangıç saati ayarla
             timeBaslangic.Properties.EditFormat.FormatString = "HH:mm";
             timeBaslangic.Properties.DisplayFormat.FormatString = "HH:mm";
             timeBaslangic.Properties.Mask.EditMask = "HH:mm";
             timeBaslangic.EditValue = DateTime.Today.AddHours(9); // 09:00
 
-            timeBitis.Properties.EditFormat.FormatString = "HH:mm";
-            timeBitis.Properties.DisplayFormat.FormatString = "HH:mm";
-            timeBitis.Properties.Mask.EditMask = "HH:mm";
-            timeBitis.EditValue = DateTime.Today.AddHours(12); // 12:00
+            // Saat seçiciyi ayarla (1-12 saat arası)
+            spinSaat.Properties.MinValue = 1;
+            spinSaat.Properties.MaxValue = 12;
+            spinSaat.EditValue = 3; // Varsayılan 3 saat
 
             HesaplaToplamUcret();
         }
@@ -55,9 +56,9 @@ namespace KafeOtomasyonu.Forms
         }
 
         /// <summary>
-        /// Bitiş saati değiştiğinde
+        /// Saat sayısı değiştiğinde
         /// </summary>
-        private void timeBitis_EditValueChanged(object sender, EventArgs e)
+        private void spinSaat_EditValueChanged(object sender, EventArgs e)
         {
             HesaplaToplamUcret();
         }
@@ -77,31 +78,18 @@ namespace KafeOtomasyonu.Forms
         {
             try
             {
-                if (timeBaslangic.EditValue == null || timeBitis.EditValue == null)
+                if (timeBaslangic.EditValue == null || spinSaat.EditValue == null)
                     return;
 
-                DateTime baslangic = (DateTime)timeBaslangic.EditValue;
-                DateTime bitis = (DateTime)timeBitis.EditValue;
+                int saatSayisi = Convert.ToInt32(spinSaat.EditValue);
+                decimal toplamUcret = saatSayisi * SAATLIK_UCRET;
 
-                TimeSpan baslangicSaat = baslangic.TimeOfDay;
-                TimeSpan bitisSaat = bitis.TimeOfDay;
-
-                if (bitisSaat <= baslangicSaat)
-                {
-                    lblToplamUcret.Text = "Bitiş saati, başlangıç saatinden sonra olmalıdır!";
-                    lblToplamUcret.ForeColor = System.Drawing.Color.Red;
-                    return;
-                }
-
-                int saatFarki = (int)(bitisSaat - baslangicSaat).TotalHours;
-                decimal toplamUcret = saatFarki * _masa.SaatlikUcret;
-
-                lblToplamUcret.Text = $"Süre: {saatFarki} saat - Toplam Ücret: {toplamUcret:C}";
+                lblToplamUcret.Text = $"Süre: {saatSayisi} saat - Toplam Ücret: {toplamUcret:C}";
                 lblToplamUcret.ForeColor = System.Drawing.Color.Green;
             }
             catch (Exception)
             {
-                lblToplamUcret.Text = "Geçerli saat giriniz";
+                lblToplamUcret.Text = "Geçerli değer giriniz";
                 lblToplamUcret.ForeColor = System.Drawing.Color.Red;
             }
         }
@@ -119,29 +107,43 @@ namespace KafeOtomasyonu.Forms
                     return;
                 }
 
-                if (timeBaslangic.EditValue == null || timeBitis.EditValue == null)
+                if (timeBaslangic.EditValue == null)
                 {
-                    MessageBox.Show("Lütfen başlangıç ve bitiş saatlerini giriniz.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Lütfen başlangıç saatini giriniz.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (spinSaat.EditValue == null)
+                {
+                    MessageBox.Show("Lütfen kaç saat kullanacağınızı seçiniz.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 DateTime randevuTarihi = ((DateTime)dateRandevu.EditValue).Date;
                 DateTime baslangic = (DateTime)timeBaslangic.EditValue;
-                DateTime bitis = (DateTime)timeBitis.EditValue;
+                int saatSayisi = Convert.ToInt32(spinSaat.EditValue);
 
                 TimeSpan baslangicSaat = baslangic.TimeOfDay;
-                TimeSpan bitisSaat = bitis.TimeOfDay;
+                TimeSpan bitisSaat = baslangicSaat.Add(TimeSpan.FromHours(saatSayisi));
 
                 // Validasyonlar
-                if (bitisSaat <= baslangicSaat)
-                {
-                    MessageBox.Show("Bitiş saati, başlangıç saatinden sonra olmalıdır.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
                 if (randevuTarihi < DateTime.Today)
                 {
                     MessageBox.Show("Geçmiş tarih için randevu oluşturamazsınız.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Bitiş saati 24 saati geçiyorsa
+                if (bitisSaat.TotalHours >= 24)
+                {
+                    MessageBox.Show("Randevu bitiş saati gece yarısını geçemez. Lütfen daha az saat seçiniz.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Bugün için geçmiş saat kontrolü
+                if (randevuTarihi == DateTime.Today && baslangicSaat < DateTime.Now.TimeOfDay)
+                {
+                    MessageBox.Show("Geçmiş saat için randevu oluşturamazsınız.", "Uyarı", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -164,7 +166,7 @@ namespace KafeOtomasyonu.Forms
                     Durum = "Beklemede"
                 };
 
-                randevu.HesaplaToplamUcret(_masa.SaatlikUcret);
+                randevu.HesaplaToplamUcret(SAATLIK_UCRET);
 
                 int randevuId = _randevuRepository.Add(randevu);
 
@@ -175,6 +177,9 @@ namespace KafeOtomasyonu.Forms
                     {
                         _masaRepository.UpdateDurum(_masa.MasaID, "Rezerve");
                     }
+
+                    MessageBox.Show($"Randevu başarıyla oluşturuldu!\n\nTarih: {randevuTarihi:dd.MM.yyyy}\nSaat: {baslangicSaat:hh\\:mm} - {bitisSaat:hh\\:mm}\nSüre: {saatSayisi} saat\nToplam Ücret: {randevu.ToplamUcret:C}", 
+                        "Başarılı", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     this.DialogResult = DialogResult.OK;
                     this.Close();

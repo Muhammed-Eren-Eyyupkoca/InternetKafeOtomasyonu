@@ -83,6 +83,51 @@
 
 ---
 
+## 📌 6. Güncelleme
+
+**Kullanıcı Profil Yönetimi ve Randevu İşlemleri:**
+
+- **Randevularım Sayfası:**
+  - Kullanıcının tüm randevularını listeleme
+  - Durum bazlı filtreleme (Tümü, Beklemede, Onaylandı, İptal Edildi, Tamamlandı)
+  - Renk kodlu durum gösterimi
+  - Randevu detayları (Masa, tarih, saat, ücret)
+  - Otomatik yenileme butonu
+
+- **Randevu İptal Sistemi:**
+  - Aktif randevuları iptal edebilme
+  - İptal nedeni girme zorunluluğu
+  - Geçmiş randevular için iptal butonu gösterilmez
+  - İptal onay ekranı
+
+- **Randevu Düzenleme Sistemi:**
+  - Randevu tarih ve saat değiştirme
+  - Çakışma kontrolü ile güncelleme
+  - Otomatik ücret yeniden hesaplama
+  - Geçmiş randevular düzenlenemez
+
+- **Profil Sayfası:**
+  - Kullanıcı bilgilerini görüntüleme
+  - Ad Soyad düzenleme
+  - E-posta güncelleme (benzersizlik kontrolü)
+  - Telefon güncelleme
+  - Kayıt tarihi ve son giriş bilgisi
+  - Kullanıcı adı salt okunur (değiştirilemez)
+
+- **Şifre Değiştirme:**
+  - Mevcut şifre doğrulama
+  - Yeni şifre girme (min 6 karakter)
+  - Şifre eşleşme kontrolü
+  - Güvenli şifre güncelleme
+
+- **Ana Sayfa İyileştirmeleri:**
+  - Üst menüye "📅 Randevularım" butonu eklendi
+  - Üst menüye "👤 Profilim" butonu eklendi
+  - Modern mor ve turkuaz renk şeması
+  - Butonlar responsive yerleşim
+
+---
+
 **Geliştirici:** Muhammed Eren Eyyüpkoca
 
 ---

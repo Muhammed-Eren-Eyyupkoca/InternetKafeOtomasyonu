@@ -22,30 +22,31 @@ namespace KafeOtomasyonu.Forms
             
             // İlk sekmeyi yükle
             YukleKullanicilar();
+            
+            // Sekme değişikliği event'ini bağla
+            xtraTabControl1.SelectedPageChanged += XtraTabControl1_SelectedPageChanged;
         }
 
         /// <summary>
-        /// Kullanıcılar sekmesi seçildiğinde
+        /// Sekme değiştiğinde otomatik yenile
         /// </summary>
-        private void xtraTabPage1_Paint(object sender, PaintEventArgs e)
+        private void XtraTabControl1_SelectedPageChanged(object sender, DevExpress.XtraTab.TabPageChangedEventArgs e)
         {
-            YukleKullanicilar();
-        }
-
-        /// <summary>
-        /// Masalar sekmesi seçildiğinde
-        /// </summary>
-        private void xtraTabPage2_Paint(object sender, PaintEventArgs e)
-        {
-            YukleMasalar();
-        }
-
-        /// <summary>
-        /// Randevular sekmesi seçildiğinde
-        /// </summary>
-        private void xtraTabPage3_Paint(object sender, PaintEventArgs e)
-        {
-            YukleRandevular();
+            if (e.Page == xtraTabPageKullanicilar)
+            {
+                gridControlKullanicilar.DataSource = null;
+                YukleKullanicilar();
+            }
+            else if (e.Page == xtraTabPageMasalar)
+            {
+                gridControlMasalar.DataSource = null;
+                YukleMasalar();
+            }
+            else if (e.Page == xtraTabPageRandevular)
+            {
+                gridControlRandevular.DataSource = null;
+                YukleRandevular();
+            }
         }
 
         /// <summary>
@@ -53,11 +54,8 @@ namespace KafeOtomasyonu.Forms
         /// </summary>
         private void YukleKullanicilar()
         {
-            if (gridControlKullanicilar.DataSource == null)
-            {
-                var repo = new Data.KullaniciRepository();
-                gridControlKullanicilar.DataSource = repo.GetAll();
-            }
+            var repo = new Data.KullaniciRepository();
+            gridControlKullanicilar.DataSource = repo.GetAll();
         }
 
         /// <summary>
@@ -65,11 +63,8 @@ namespace KafeOtomasyonu.Forms
         /// </summary>
         private void YukleMasalar()
         {
-            if (gridControlMasalar.DataSource == null)
-            {
-                var repo = new Data.MasaRepository();
-                gridControlMasalar.DataSource = repo.GetAll();
-            }
+            var repo = new Data.MasaRepository();
+            gridControlMasalar.DataSource = repo.GetAll();
         }
 
         /// <summary>
@@ -77,11 +72,8 @@ namespace KafeOtomasyonu.Forms
         /// </summary>
         private void YukleRandevular()
         {
-            if (gridControlRandevular.DataSource == null)
-            {
-                var repo = new Data.RandevuRepository();
-                gridControlRandevular.DataSource = repo.GetAll();
-            }
+            var repo = new Data.RandevuRepository();
+            gridControlRandevular.DataSource = repo.GetAll();
         }
 
         /// <summary>

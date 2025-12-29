@@ -32,10 +32,10 @@ namespace KafeOtomasyonu.Forms
             this.lblBaslik = new DevExpress.XtraEditors.LabelControl();
             this.groupRandevu = new DevExpress.XtraEditors.GroupControl();
             this.lblToplamUcret = new DevExpress.XtraEditors.LabelControl();
-            this.timeBitis = new DevExpress.XtraEditors.TimeEdit();
+            this.spinSaat = new DevExpress.XtraEditors.SpinEdit();
             this.timeBaslangic = new DevExpress.XtraEditors.TimeEdit();
             this.dateRandevu = new DevExpress.XtraEditors.DateEdit();
-            this.lblBitisSaati = new DevExpress.XtraEditors.LabelControl();
+            this.lblKacSaat = new DevExpress.XtraEditors.LabelControl();
             this.lblBaslangicSaati = new DevExpress.XtraEditors.LabelControl();
             this.lblTarih = new DevExpress.XtraEditors.LabelControl();
             this.lblSaatlikUcret = new DevExpress.XtraEditors.LabelControl();
@@ -45,7 +45,7 @@ namespace KafeOtomasyonu.Forms
             this.panelUst.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.groupRandevu)).BeginInit();
             this.groupRandevu.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.timeBitis.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.spinSaat.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeBaslangic.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dateRandevu.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dateRandevu.Properties.CalendarTimeProperties)).BeginInit();
@@ -76,10 +76,10 @@ namespace KafeOtomasyonu.Forms
             // groupRandevu
             // 
             this.groupRandevu.Controls.Add(this.lblToplamUcret);
-            this.groupRandevu.Controls.Add(this.timeBitis);
+            this.groupRandevu.Controls.Add(this.spinSaat);
             this.groupRandevu.Controls.Add(this.timeBaslangic);
             this.groupRandevu.Controls.Add(this.dateRandevu);
-            this.groupRandevu.Controls.Add(this.lblBitisSaati);
+            this.groupRandevu.Controls.Add(this.lblKacSaat);
             this.groupRandevu.Controls.Add(this.lblBaslangicSaati);
             this.groupRandevu.Controls.Add(this.lblTarih);
             this.groupRandevu.Controls.Add(this.lblSaatlikUcret);
@@ -110,7 +110,7 @@ namespace KafeOtomasyonu.Forms
             this.lblSaatlikUcret.Name = "lblSaatlikUcret";
             this.lblSaatlikUcret.Size = new System.Drawing.Size(113, 19);
             this.lblSaatlikUcret.TabIndex = 1;
-            this.lblSaatlikUcret.Text = "Saatlik Ücret: ₺15";
+            this.lblSaatlikUcret.Text = "Saatlik Ücret: ₺75,00";
             // 
             // lblTarih
             // 
@@ -132,15 +132,15 @@ namespace KafeOtomasyonu.Forms
             this.lblBaslangicSaati.TabIndex = 3;
             this.lblBaslangicSaati.Text = "Başlangıç Saati:";
             // 
-            // lblBitisSaati
+            // lblKacSaat
             // 
-            this.lblBitisSaati.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblBitisSaati.Appearance.Options.UseFont = true;
-            this.lblBitisSaati.Location = new System.Drawing.Point(20, 185);
-            this.lblBitisSaati.Name = "lblBitisSaati";
-            this.lblBitisSaati.Size = new System.Drawing.Size(65, 19);
-            this.lblBitisSaati.TabIndex = 4;
-            this.lblBitisSaati.Text = "Bitiş Saati:";
+            this.lblKacSaat.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblKacSaat.Appearance.Options.UseFont = true;
+            this.lblKacSaat.Location = new System.Drawing.Point(20, 185);
+            this.lblKacSaat.Name = "lblKacSaat";
+            this.lblKacSaat.Size = new System.Drawing.Size(127, 19);
+            this.lblKacSaat.TabIndex = 4;
+            this.lblKacSaat.Text = "Kaç Saat Kullanılacak:";
             // 
             // dateRandevu
             // 
@@ -170,18 +170,33 @@ namespace KafeOtomasyonu.Forms
             this.timeBaslangic.TabIndex = 6;
             this.timeBaslangic.EditValueChanged += new System.EventHandler(this.timeBaslangic_EditValueChanged);
             // 
-            // timeBitis
+            // spinSaat
             // 
-            this.timeBitis.EditValue = new System.DateTime(2025, 1, 1, 0, 0, 0, 0);
-            this.timeBitis.Location = new System.Drawing.Point(160, 183);
-            this.timeBitis.Name = "timeBitis";
-            this.timeBitis.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.timeBitis.Properties.Appearance.Options.UseFont = true;
-            this.timeBitis.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            this.spinSaat.EditValue = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.spinSaat.Location = new System.Drawing.Point(160, 183);
+            this.spinSaat.Name = "spinSaat";
+            this.spinSaat.Properties.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.spinSaat.Properties.Appearance.Options.UseFont = true;
+            this.spinSaat.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
-            this.timeBitis.Size = new System.Drawing.Size(280, 24);
-            this.timeBitis.TabIndex = 7;
-            this.timeBitis.EditValueChanged += new System.EventHandler(this.timeBitis_EditValueChanged);
+            this.spinSaat.Properties.IsFloatValue = false;
+            this.spinSaat.Properties.MaxValue = new decimal(new int[] {
+            12,
+            0,
+            0,
+            0});
+            this.spinSaat.Properties.MinValue = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.spinSaat.Size = new System.Drawing.Size(280, 24);
+            this.spinSaat.TabIndex = 7;
+            this.spinSaat.EditValueChanged += new System.EventHandler(this.spinSaat_EditValueChanged);
             // 
             // lblToplamUcret
             // 
@@ -242,7 +257,7 @@ namespace KafeOtomasyonu.Forms
             ((System.ComponentModel.ISupportInitialize)(this.groupRandevu)).EndInit();
             this.groupRandevu.ResumeLayout(false);
             this.groupRandevu.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.timeBitis.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.spinSaat.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeBaslangic.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dateRandevu.Properties.CalendarTimeProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dateRandevu.Properties)).EndInit();
@@ -259,10 +274,10 @@ namespace KafeOtomasyonu.Forms
         private DevExpress.XtraEditors.LabelControl lblSaatlikUcret;
         private DevExpress.XtraEditors.LabelControl lblTarih;
         private DevExpress.XtraEditors.LabelControl lblBaslangicSaati;
-        private DevExpress.XtraEditors.LabelControl lblBitisSaati;
+        private DevExpress.XtraEditors.LabelControl lblKacSaat;
         private DevExpress.XtraEditors.DateEdit dateRandevu;
         private DevExpress.XtraEditors.TimeEdit timeBaslangic;
-        private DevExpress.XtraEditors.TimeEdit timeBitis;
+        private DevExpress.XtraEditors.SpinEdit spinSaat;
         private DevExpress.XtraEditors.LabelControl lblToplamUcret;
         private DevExpress.XtraEditors.SimpleButton btnOlustur;
         private DevExpress.XtraEditors.SimpleButton btnIptal;

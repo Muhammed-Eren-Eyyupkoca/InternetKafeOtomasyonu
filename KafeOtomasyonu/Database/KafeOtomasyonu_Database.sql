@@ -59,7 +59,7 @@ BEGIN
         MasaID INT IDENTITY(1,1) PRIMARY KEY,
         MasaNo INT NOT NULL UNIQUE,
         MasaAdi NVARCHAR(50),
-        SaatlikUcret DECIMAL(10,2) NOT NULL DEFAULT 15.00,
+        SaatlikUcret DECIMAL(10,2) NOT NULL DEFAULT 75.00,
         Durum NVARCHAR(20) DEFAULT 'Bos', -- Bos, Dolu, Rezerve, Bakim
         ResimYolu NVARCHAR(255),
         Aciklama NVARCHAR(500),
@@ -157,41 +157,45 @@ BEGIN
 END
 GO
 
--- Örnek Masalar Ekle (25 masa)
+-- Örnek Masalar Ekle (25 masa - Tüm masalar 75 TL/saat)
 IF NOT EXISTS (SELECT * FROM Masalar)
 BEGIN
     -- Üst kenar masaları (1-10)
     INSERT INTO Masalar (MasaNo, MasaAdi, SaatlikUcret, Durum, PCOzellikleri, Aciklama) VALUES
-    (1, 'Masa 1', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar - Sol'),
-    (2, 'Masa 2', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar'),
-    (3, 'Masa 3', 18.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Üst kenar - Premium'),
-    (4, 'Masa 4', 18.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Üst kenar - Premium'),
-    (5, 'Masa 5', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar'),
-    (6, 'Masa 6', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar'),
-    (7, 'Masa 7', 20.00, 'Bos', 'Intel i9, 32GB RAM, RTX 3080, 240Hz Monitor', 'Üst kenar - VIP'),
-    (8, 'Masa 8', 20.00, 'Bos', 'Intel i9, 32GB RAM, RTX 3080, 240Hz Monitor', 'Üst kenar - VIP'),
-    (9, 'Masa 9', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar'),
-    (10, 'Masa 10', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar - Sağ'),
+    (1, 'Masa 1', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar - Sol'),
+    (2, 'Masa 2', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar'),
+    (3, 'Masa 3', 75.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Üst kenar - Premium'),
+    (4, 'Masa 4', 75.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Üst kenar - Premium'),
+    (5, 'Masa 5', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar'),
+    (6, 'Masa 6', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar'),
+    (7, 'Masa 7', 75.00, 'Bos', 'Intel i9, 32GB RAM, RTX 3080, 240Hz Monitor', 'Üst kenar - VIP'),
+    (8, 'Masa 8', 75.00, 'Bos', 'Intel i9, 32GB RAM, RTX 3080, 240Hz Monitor', 'Üst kenar - VIP'),
+    (9, 'Masa 9', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar'),
+    (10, 'Masa 10', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Üst kenar - Sağ'),
     
     -- Alt kenar masaları (11-20)
-    (11, 'Masa 11', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar - Sol'),
-    (12, 'Masa 12', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar'),
-    (13, 'Masa 13', 18.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Alt kenar - Premium'),
-    (14, 'Masa 14', 18.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Alt kenar - Premium'),
-    (15, 'Masa 15', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar'),
-    (16, 'Masa 16', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar'),
-    (17, 'Masa 17', 20.00, 'Bos', 'Intel i9, 32GB RAM, RTX 3080, 240Hz Monitor', 'Alt kenar - VIP'),
-    (18, 'Masa 18', 20.00, 'Bos', 'Intel i9, 32GB RAM, RTX 3080, 240Hz Monitor', 'Alt kenar - VIP'),
-    (19, 'Masa 19', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar'),
-    (20, 'Masa 20', 15.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar - Sağ'),
+    (11, 'Masa 11', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar - Sol'),
+    (12, 'Masa 12', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar'),
+    (13, 'Masa 13', 75.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Alt kenar - Premium'),
+    (14, 'Masa 14', 75.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Alt kenar - Premium'),
+    (15, 'Masa 15', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar'),
+    (16, 'Masa 16', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar'),
+    (17, 'Masa 17', 75.00, 'Bos', 'Intel i9, 32GB RAM, RTX 3080, 240Hz Monitor', 'Alt kenar - VIP'),
+    (18, 'Masa 18', 75.00, 'Bos', 'Intel i9, 32GB RAM, RTX 3080, 240Hz Monitor', 'Alt kenar - VIP'),
+    (19, 'Masa 19', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar'),
+    (20, 'Masa 20', 75.00, 'Bos', 'Intel i5, 16GB RAM, RTX 3060, 144Hz Monitor', 'Alt kenar - Sağ'),
     
     -- Sağ kenar masaları (21-25)
-    (21, 'Masa 21', 18.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Sağ kenar - Premium'),
-    (22, 'Masa 22', 18.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Sağ kenar - Premium'),
-    (23, 'Masa 23', 20.00, 'Bos', 'Intel i9, 32GB RAM, RTX 3080, 240Hz Monitor', 'Sağ kenar - VIP'),
-    (24, 'Masa 24', 18.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Sağ kenar - Premium'),
-    (25, 'Masa 25', 18.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Sağ kenar - Premium');
+    (21, 'Masa 21', 75.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Sağ kenar - Premium'),
+    (22, 'Masa 22', 75.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Sağ kenar - Premium'),
+    (23, 'Masa 23', 75.00, 'Bos', 'Intel i9, 32GB RAM, RTX 3080, 240Hz Monitor', 'Sağ kenar - VIP'),
+    (24, 'Masa 24', 75.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Sağ kenar - Premium'),
+    (25, 'Masa 25', 75.00, 'Bos', 'Intel i7, 32GB RAM, RTX 3070, 165Hz Monitor', 'Sağ kenar - Premium');
 END
+GO
+
+-- Mevcut masaların saatlik ücretlerini güncelle (eğer eski ücretlerle oluşturulmuşsa)
+UPDATE Masalar SET SaatlikUcret = 75.00 WHERE SaatlikUcret != 75.00;
 GO
 
 -- =====================================================

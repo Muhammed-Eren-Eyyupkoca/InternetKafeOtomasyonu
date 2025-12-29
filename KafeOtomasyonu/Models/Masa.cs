@@ -24,7 +24,7 @@ namespace KafeOtomasyonu.Models
 
         public Masa()
         {
-            SaatlikUcret = 15.00m;
+            SaatlikUcret = 75.00m; // Saatlik ücret 75 TL
             Durum = "Bos";
             Aktif = true;
             OlusturmaTarihi = DateTime.Now;

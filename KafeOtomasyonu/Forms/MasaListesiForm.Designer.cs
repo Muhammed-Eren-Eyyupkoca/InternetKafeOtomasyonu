@@ -30,6 +30,8 @@ namespace KafeOtomasyonu.Forms
         {
             this.panelUst = new System.Windows.Forms.Panel();
             this.btnCikis = new DevExpress.XtraEditors.SimpleButton();
+            this.btnProfil = new DevExpress.XtraEditors.SimpleButton();
+            this.btnRandevularim = new DevExpress.XtraEditors.SimpleButton();
             this.btnYenile = new DevExpress.XtraEditors.SimpleButton();
             this.lblHosgeldin = new DevExpress.XtraEditors.LabelControl();
             this.lblBaslik = new DevExpress.XtraEditors.LabelControl();
@@ -50,6 +52,8 @@ namespace KafeOtomasyonu.Forms
             // 
             this.panelUst.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
             this.panelUst.Controls.Add(this.btnCikis);
+            this.panelUst.Controls.Add(this.btnProfil);
+            this.panelUst.Controls.Add(this.btnRandevularim);
             this.panelUst.Controls.Add(this.btnYenile);
             this.panelUst.Controls.Add(this.lblHosgeldin);
             this.panelUst.Controls.Add(this.lblBaslik);
@@ -66,12 +70,46 @@ namespace KafeOtomasyonu.Forms
             this.btnCikis.Appearance.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.btnCikis.Appearance.Options.UseBackColor = true;
             this.btnCikis.Appearance.Options.UseFont = true;
-            this.btnCikis.Location = new System.Drawing.Point(1280, 20);
+            this.btnCikis.Location = new System.Drawing.Point(1250, 20);
             this.btnCikis.Name = "btnCikis";
             this.btnCikis.Size = new System.Drawing.Size(100, 35);
             this.btnCikis.TabIndex = 3;
             this.btnCikis.Text = "Çıkış";
             this.btnCikis.Click += new System.EventHandler(this.btnCikis_Click);
+            // 
+            // btnProfil
+            // 
+            this.btnProfil.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(150)))), ((int)(((byte)(136)))));
+            this.btnProfil.Appearance.ForeColor = System.Drawing.Color.White;
+            this.btnProfil.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnProfil.Appearance.Options.UseBackColor = true;
+            this.btnProfil.Appearance.Options.UseForeColor = true;
+            this.btnProfil.Appearance.Options.UseFont = true;
+            this.btnProfil.Location = new System.Drawing.Point(650, 20);
+            this.btnProfil.Name = "btnProfil";
+            this.btnProfil.Size = new System.Drawing.Size(110, 35);
+            this.btnProfil.TabIndex = 5;
+            this.btnProfil.Text = "👤 Profilim";
+            this.btnProfil.Visible = true;
+            this.btnProfil.Enabled = true;
+            this.btnProfil.Click += new System.EventHandler(this.btnProfil_Click);
+            // 
+            // btnRandevularim
+            // 
+            this.btnRandevularim.Appearance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(39)))), ((int)(((byte)(176)))));
+            this.btnRandevularim.Appearance.ForeColor = System.Drawing.Color.White;
+            this.btnRandevularim.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnRandevularim.Appearance.Options.UseBackColor = true;
+            this.btnRandevularim.Appearance.Options.UseForeColor = true;
+            this.btnRandevularim.Appearance.Options.UseFont = true;
+            this.btnRandevularim.Location = new System.Drawing.Point(500, 20);
+            this.btnRandevularim.Name = "btnRandevularim";
+            this.btnRandevularim.Size = new System.Drawing.Size(140, 35);
+            this.btnRandevularim.TabIndex = 4;
+            this.btnRandevularim.Text = "📅 Randevularım";
+            this.btnRandevularim.Visible = true;
+            this.btnRandevularim.Enabled = true;
+            this.btnRandevularim.Click += new System.EventHandler(this.btnRandevularim_Click);
             // 
             // btnYenile
             // 
@@ -80,7 +118,7 @@ namespace KafeOtomasyonu.Forms
             this.btnYenile.Appearance.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
             this.btnYenile.Appearance.Options.UseBackColor = true;
             this.btnYenile.Appearance.Options.UseFont = true;
-            this.btnYenile.Location = new System.Drawing.Point(1160, 20);
+            this.btnYenile.Location = new System.Drawing.Point(1140, 20);
             this.btnYenile.Name = "btnYenile";
             this.btnYenile.Size = new System.Drawing.Size(100, 35);
             this.btnYenile.TabIndex = 2;
@@ -234,6 +272,8 @@ namespace KafeOtomasyonu.Forms
         private System.Windows.Forms.Panel panelUst;
         private DevExpress.XtraEditors.LabelControl lblBaslik;
         private DevExpress.XtraEditors.LabelControl lblHosgeldin;
+        private DevExpress.XtraEditors.SimpleButton btnRandevularim;
+        private DevExpress.XtraEditors.SimpleButton btnProfil;
         private DevExpress.XtraEditors.SimpleButton btnYenile;
         private DevExpress.XtraEditors.SimpleButton btnCikis;
         private System.Windows.Forms.Panel panelMasalar;

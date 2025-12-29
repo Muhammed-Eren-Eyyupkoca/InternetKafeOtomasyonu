@@ -79,6 +79,31 @@ namespace KafeOtomasyonu.Data
         }
 
         /// <summary>
+        /// Randevu düzenle (tarih ve saat güncelleme)
+        /// </summary>
+        public void Update(int randevuId, DateTime yeniTarih, TimeSpan yeniBaslangic, TimeSpan yeniBitis, int toplamSaat, decimal toplamUcret)
+        {
+            string query = @"UPDATE Randevular 
+                           SET RandevuTarihi = @RandevuTarihi, 
+                               BaslangicSaati = @BaslangicSaati, 
+                               BitisSaati = @BitisSaati, 
+                               ToplamSaat = @ToplamSaat, 
+                               ToplamUcret = @ToplamUcret
+                           WHERE RandevuID = @RandevuID";
+
+            var parameters = DatabaseHelper.CreateParameters(
+                ("@RandevuTarihi", yeniTarih),
+                ("@BaslangicSaati", yeniBaslangic),
+                ("@BitisSaati", yeniBitis),
+                ("@ToplamSaat", toplamSaat),
+                ("@ToplamUcret", toplamUcret),
+                ("@RandevuID", randevuId)
+            );
+
+            DatabaseHelper.ExecuteNonQuery(query, parameters);
+        }
+
+        /// <summary>
         /// Randevuyu "Gelmedi" olarak işaretle
         /// </summary>
         public void GelmediOlarakIsaretle(int randevuId)

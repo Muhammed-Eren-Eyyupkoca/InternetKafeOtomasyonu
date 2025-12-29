@@ -330,6 +330,7 @@ namespace KafeOtomasyonu.Forms
             using (var randevularimForm = new RandevularimForm())
             {
                 randevularimForm.ShowDialog();
+                // Randevu değişiklikleri olabilir, masaları yenile
                 MasalariYukle();
                 MasaPanelleriniOlustur();
             }
@@ -340,6 +341,7 @@ namespace KafeOtomasyonu.Forms
             using (var profilForm = new ProfilForm())
             {
                 profilForm.ShowDialog();
+                // Kullanıcı adı değişmiş olabilir, hoşgeldin mesajını güncelle
                 lblHosgeldin.Text = $"Hoş geldiniz, {SessionManager.GetCurrentUserFullName()}";
             }
         }

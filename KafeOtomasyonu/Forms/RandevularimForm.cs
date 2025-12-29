@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
@@ -17,39 +17,27 @@ namespace KafeOtomasyonu.Forms
             InitializeComponent();
             _randevuRepo = new RandevuRepository();
             _kullaniciId = SessionManager.GetCurrentUserId();
-
+            
             this.Load += RandevularimForm_Load;
-        }
-
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(900, 600);
-            this.Name = "RandevularimForm";
-            this.Text = "Randevularım";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.ResumeLayout(false);
         }
 
         private void RandevularimForm_Load(object sender, EventArgs e)
         {
             var randevular = _randevuRepo.GetByKullaniciId(_kullaniciId);
-
+            
             string mesaj = $"Toplam {randevular.Count} randevunuz var:\n\n";
-
+            
             foreach (var r in randevular)
             {
                 mesaj += $"📅 {r.MasaAdi} - {r.RandevuTarihi:dd.MM.yyyy} {r.BaslangicSaati:hh\\:mm}\n";
                 mesaj += $"   Durum: {r.Durum} - Ücret: {r.ToplamUcret:C}\n\n";
             }
-
+            
             if (randevular.Count == 0)
             {
                 mesaj = "Henüz randevunuz bulunmuyor.";
             }
-
+            
             Label lblMesaj = new Label
             {
                 Text = mesaj,

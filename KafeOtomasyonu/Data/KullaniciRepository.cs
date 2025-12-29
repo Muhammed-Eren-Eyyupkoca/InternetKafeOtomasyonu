@@ -172,6 +172,69 @@ namespace KafeOtomasyonu.Data
         }
 
         /// <summary>
+        /// Kullanıcı bilgilerini güncelle (Ad Soyad, Email, Telefon)
+        /// </summary>
+        public void UpdateProfil(int kullaniciId, string adSoyad, string email, string telefon)
+        {
+            // Email kontrolü (kendi ID'si hariç)
+            string checkQuery = "SELECT COUNT(*) FROM Kullanicilar WHERE Email = @Email AND KullaniciID != @KullaniciID";
+            var checkParams = DatabaseHelper.CreateParameters(
+                ("@Email", email),
+                ("@KullaniciID", kullaniciId)
+            );
+            int count = Convert.ToInt32(DatabaseHelper.ExecuteScalar(checkQuery, checkParams));
+            
+            if (count > 0)
+            {
+                throw new Exception("Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor.");
+            }
+
+            string query = @"UPDATE Kullanicilar 
+                           SET AdSoyad = @AdSoyad, Email = @Email, Telefon = @Telefon
+                           WHERE KullaniciID = @KullaniciID";
+
+            var parameters = DatabaseHelper.CreateParameters(
+                ("@AdSoyad", adSoyad),
+                ("@Email", email),
+                ("@Telefon", telefon),
+                ("@KullaniciID", kullaniciId)
+            );
+
+            DatabaseHelper.ExecuteNonQuery(query, parameters);
+        }
+
+        /// <summary>
+        /// Şifre değiştir
+        /// </summary>
+        public bool ChangeSifre(int kullaniciId, string eskiSifre, string yeniSifre)
+        {
+            // Önce eski şifreyi kontrol et
+            string hashedEskiSifre = DatabaseHelper.HashPassword(eskiSifre);
+            string checkQuery = "SELECT COUNT(*) FROM Kullanicilar WHERE KullaniciID = @KullaniciID AND Sifre = @Sifre";
+            var checkParams = DatabaseHelper.CreateParameters(
+                ("@KullaniciID", kullaniciId),
+                ("@Sifre", hashedEskiSifre)
+            );
+            int count = Convert.ToInt32(DatabaseHelper.ExecuteScalar(checkQuery, checkParams));
+            
+            if (count == 0)
+            {
+                return false; // Eski şifre yanlış
+            }
+
+            // Yeni şifreyi güncelle
+            string hashedYeniSifre = DatabaseHelper.HashPassword(yeniSifre);
+            string updateQuery = "UPDATE Kullanicilar SET Sifre = @Sifre WHERE KullaniciID = @KullaniciID";
+            var updateParams = DatabaseHelper.CreateParameters(
+                ("@Sifre", hashedYeniSifre),
+                ("@KullaniciID", kullaniciId)
+            );
+            DatabaseHelper.ExecuteNonQuery(updateQuery, updateParams);
+            
+            return true;
+        }
+
+        /// <summary>
         /// DataRow'dan Kullanici nesnesine dönüştürme
         /// </summary>
         private Kullanici MapToKullanici(DataRow row)

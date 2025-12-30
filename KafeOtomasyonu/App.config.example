@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <!-- configSections MUTLAKA en üstte olmalı -->
   <configSections>
@@ -9,10 +9,19 @@
 
   <!-- Connection Strings -->
   <connectionStrings>
-    <!-- SQL Server bağlantı dizesi - Kendi sunucu ayarlarınıza göre düzenleyin -->
-    <!-- Windows Authentication (Integrated Security) kullanılıyor -->
+    <!-- 
+      SQL Server bağlantı dizesi - Kendi sunucu ayarlarınıza göre düzenleyin
+      
+      KULLANIM:
+      1. Bu dosyayı "App.config" olarak kopyalayın
+      2. Aşağıdaki connection string'i kendi SQL Server bilgilerinize göre düzenleyin
+      
+      ÖRNEKler:
+      - Windows Authentication: Server=localhost\SQLEXPRESS;Database=KafeOtomasyonuDB;Integrated Security=True;TrustServerCertificate=True;
+      - SQL Server Authentication: Server=localhost\SQLEXPRESS;Database=KafeOtomasyonuDB;User Id=sa;Password=YourPassword;TrustServerCertificate=True;
+    -->
     <add name="KafeOtomasyonuDB" 
-         connectionString="Server=localhost\SQLEXPRESS;Database=KafeOtomasyonuDB;Integrated Security=True;TrustServerCertificate=True;" 
+         connectionString="Server=YOUR_SERVER_NAME;Database=KafeOtomasyonuDB;Integrated Security=True;TrustServerCertificate=True;" 
          providerName="System.Data.SqlClient" />
   </connectionStrings>
 
@@ -36,3 +45,4 @@
     </DevExpress.LookAndFeel.Design.AppSettings>
   </applicationSettings>
 </configuration>
+

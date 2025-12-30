@@ -149,5 +149,5 @@ terminals/
 # DevExpress
 *.licx
 
-# Local configuration (if needed)
-# App.config
+# Local configuration (her geliştirici için farklı olabilir)
+**/App.config

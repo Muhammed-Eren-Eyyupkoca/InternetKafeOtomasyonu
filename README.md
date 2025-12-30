@@ -2,6 +2,39 @@
 
 ---
 
+## 🚀 Kurulum
+
+### 1. **Projeyi Klonlayın:**
+```bash
+git clone https://github.com/YOUR_USERNAME/KafeOtomasyonu.git
+cd KafeOtomasyonu
+```
+
+### 2. **Veritabanı Kurulumu:**
+- SQL Server Management Studio'yu açın
+- `Database` klasöründeki SQL scriptlerini sırayla çalıştırın:
+  - `01_Create_Database.sql`
+  - `02_Create_Tables.sql`
+  - `03_Insert_Sample_Data.sql`
+  - vb...
+
+### 3. **App.config Ayarları:**
+- `KafeOtomasyonu/App.config.example` dosyasını `App.config` olarak kopyalayın
+- `App.config` içindeki connection string'i kendi SQL Server bilgilerinize göre düzenleyin:
+```xml
+<connectionStrings>
+  <add name="KafeOtomasyonuDB" 
+       connectionString="Server=YOUR_SERVER;Database=KafeOtomasyonuDB;Integrated Security=True;TrustServerCertificate=True;" 
+       providerName="System.Data.SqlClient" />
+</connectionStrings>
+```
+
+### 4. **Projeyi Çalıştırın:**
+- Visual Studio'da projeyi açın
+- `F5` tuşuna basarak çalıştırın
+
+---
+
 ## 📌 1. Güncelleme
 
 **Temel olarak Veri Tabanı oluşturuldu:**

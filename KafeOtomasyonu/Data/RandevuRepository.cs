@@ -64,10 +64,11 @@ namespace KafeOtomasyonu.Data
         /// <summary>
         /// Randevu iptal et
         /// </summary>
-        public void IptalEt(int randevuId, string neden)
+        public void IptalEt(int randevuId, string neden = "Kullanıcı tarafından iptal edildi")
+        
         {
             string query = @"UPDATE Randevular 
-                           SET Durum = 'IptalEdildi', IptalNedeni = @IptalNedeni 
+                           SET Durum = 'Iptal', IptalNedeni = @IptalNedeni 
                            WHERE RandevuID = @RandevuID";
 
             var parameters = DatabaseHelper.CreateParameters(
@@ -104,6 +105,33 @@ namespace KafeOtomasyonu.Data
         }
 
         /// <summary>
+        /// Randevu nesnesini güncelle
+        /// </summary>
+        public void Update(Randevu randevu)
+        {
+            string query = @"UPDATE Randevular 
+                           SET MasaID = @MasaID,
+                               RandevuTarihi = @RandevuTarihi, 
+                               BaslangicSaati = @BaslangicSaati, 
+                               BitisSaati = @BitisSaati, 
+                               ToplamSaat = @ToplamSaat, 
+                               ToplamUcret = @ToplamUcret
+                           WHERE RandevuID = @RandevuID";
+
+            var parameters = DatabaseHelper.CreateParameters(
+                ("@MasaID", randevu.MasaID),
+                ("@RandevuTarihi", randevu.RandevuTarihi),
+                ("@BaslangicSaati", randevu.BaslangicSaati),
+                ("@BitisSaati", randevu.BitisSaati),
+                ("@ToplamSaat", randevu.ToplamSaat),
+                ("@ToplamUcret", randevu.ToplamUcret),
+                ("@RandevuID", randevu.RandevuID)
+            );
+
+            DatabaseHelper.ExecuteNonQuery(query, parameters);
+        }
+
+        /// <summary>
         /// Randevuyu "Gelmedi" olarak işaretle
         /// </summary>
         public void GelmediOlarakIsaretle(int randevuId)
@@ -119,7 +147,7 @@ namespace KafeOtomasyonu.Data
             string query = @"SELECT COUNT(*) FROM Randevular 
                            WHERE MasaID = @MasaID 
                            AND RandevuTarihi = @RandevuTarihi
-                           AND Durum IN ('Beklemede', 'Onaylandi')
+                           AND Durum = 'Aktif'
                            AND (@ExcludeID IS NULL OR RandevuID != @ExcludeID)
                            AND (
                                (@Baslangic >= BaslangicSaati AND @Baslangic < BitisSaati)

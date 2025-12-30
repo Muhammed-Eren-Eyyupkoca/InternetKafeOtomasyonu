@@ -128,6 +128,46 @@
 
 ---
 
+## 📌 7. Güncelleme
+
+**Puanlama ve Yorum Sistemi:**
+
+- **Değerlendirme Yapma:**
+  - Tamamlanan randevular için değerlendirme butonu
+  - İnteraktif 5 yıldız puanlama sistemi
+  - Yorum yazma alanı (opsiyonel, max 1000 karakter)
+  - Karakter sayacı ile gerçek zamanlı geri bildirim
+  - Yıldız hover ve seçim efektleri
+
+- **Değerlendirme Kuralları:**
+  - Her randevu sadece bir kez değerlendirilebilir
+  - Sadece "Tamamlandı" durumundaki randevular değerlendirilebilir
+  - Veritabanı seviyesinde tekil kontrol (UNIQUE constraint)
+  - Kullanıcı kontrollü değerlendirme tekrarı engelleme
+
+- **Masa Detay Sayfası:**
+  - Masaya ait tüm yorumları görüntüleme
+  - Ortalama puan hesaplama ve gösterimi
+  - Toplam değerlendirme sayısı
+  - Kullanıcı adı ile yorum listeleme
+  - Tarih sıralı yorum gösterimi (en yeni üstte)
+  - Modern kart tasarımı ile yorum kartları
+
+- **Veritabanı:**
+  - Degerlendirmeler tablosu oluşturuldu
+  - Foreign key ilişkileri (Randevular, Masalar, Kullanicilar)
+  - Puan kontrolü (1-5 arası CHECK constraint)
+  - İndeksler ile performans optimizasyonu
+  - Otomatik tarih damgası (OlusturmaTarihi)
+
+- **Repository Pattern:**
+  - DegerlendirmeRepository sınıfı
+  - Add, GetByMasaId, GetMasaAveragePuan metodları
+  - HasUserReviewedRandevu kontrolü
+  - GetMasaDegerlendirmeCount istatistik metodu
+
+---
+
 **Geliştirici:** Muhammed Eren Eyyüpkoca
 
 ---

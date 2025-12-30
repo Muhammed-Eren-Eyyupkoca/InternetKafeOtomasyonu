@@ -144,3 +144,10 @@ artifacts/
 
 # Cursor AI
 .cursor/
+terminals/
+
+# DevExpress
+*.licx
+
+# Local configuration (if needed)
+# App.config

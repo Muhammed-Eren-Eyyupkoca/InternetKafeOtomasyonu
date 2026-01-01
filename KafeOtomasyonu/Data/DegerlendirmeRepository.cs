@@ -104,6 +104,21 @@ namespace KafeOtomasyonu.Data
         }
 
         /// <summary>
+        /// Kullanıcının verdiği ortalama puan
+        /// </summary>
+        public decimal GetKullaniciOrtalamaPuan(int kullaniciId)
+        {
+            string query = @"SELECT ISNULL(AVG(CAST(Puan AS DECIMAL(10,2))), 0) 
+                           FROM Degerlendirmeler 
+                           WHERE KullaniciID = @KullaniciID";
+
+            var parameters = DatabaseHelper.CreateParameters(("@KullaniciID", kullaniciId));
+            object result = DatabaseHelper.ExecuteScalar(query, parameters);
+            
+            return result != DBNull.Value ? Convert.ToDecimal(result) : 0;
+        }
+
+        /// <summary>
         /// Tüm değerlendirmeleri getir (Admin için)
         /// </summary>
         public List<Degerlendirme> GetAll()

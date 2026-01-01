@@ -26,8 +26,8 @@ namespace KafeOtomasyonu.Forms
             this.MinimizeBox = true;
             this.WindowState = FormWindowState.Maximized; // Tam ekran başlat
             
-            // Renk şeması
-            this.BackColor = ColorTranslator.FromHtml("#40E0D0"); // Turkuaz çerçeve
+            // Vintage Renk Şeması
+            this.BackColor = ColorTranslator.FromHtml("#151629"); // Dark vintage lacivert
         }
 
         private void btnGirisYap_Click(object sender, EventArgs e)
@@ -327,8 +327,8 @@ namespace KafeOtomasyonu.Forms
             var titleLabel = new DevExpress.XtraEditors.LabelControl();
             var messageLabel = new DevExpress.XtraEditors.LabelControl();
 
-            // Panel ayarları
-            notificationPanel.BackColor = isSuccess ? ColorTranslator.FromHtml("#40E0D0") : Color.FromArgb(231, 76, 60);
+            // Panel ayarları - Vintage renkler
+            notificationPanel.BackColor = isSuccess ? ColorTranslator.FromHtml("#55a586") : ColorTranslator.FromHtml("#c82b6d");
             notificationPanel.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
             notificationPanel.Size = new Size(400, 100);
             notificationPanel.Location = new Point(

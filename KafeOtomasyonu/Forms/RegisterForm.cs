@@ -26,7 +26,7 @@ namespace KafeOtomasyonu.Forms
             this.WindowState = FormWindowState.Maximized; // Tam ekran başlat
             
             // Renk şeması (Login ile aynı)
-            this.BackColor = ColorTranslator.FromHtml("#40E0D0"); // Turkuaz çerçeve
+            this.BackColor = ColorTranslator.FromHtml("#151629"); // Dark premium background
             
             // Load event
             this.Load += RegisterForm_Load;

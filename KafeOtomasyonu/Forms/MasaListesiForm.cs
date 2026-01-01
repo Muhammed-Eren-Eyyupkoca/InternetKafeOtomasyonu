@@ -35,6 +35,31 @@ namespace KafeOtomasyonu.Forms
             MasaPanelleriniOlustur();
         }
 
+        private void panelMasalar_Paint(object sender, PaintEventArgs e)
+        {
+            // WATERMARK: "İnternet Kafe" yazısını ortaya çiz
+            string watermarkText = "İnternet Kafe";
+            using (Font watermarkFont = new Font("Segoe UI", 120, FontStyle.Bold))
+            {
+                // Renk: #f6f6f2 (Açık gri, çok hafif)
+                Color watermarkColor = ColorTranslator.FromHtml("#f6f6f2");
+                // Çok şeffaf yap (alpha: 15)
+                Color transparentColor = Color.FromArgb(15, watermarkColor.R, watermarkColor.G, watermarkColor.B);
+                
+                using (SolidBrush brush = new SolidBrush(transparentColor))
+                {
+                    // Metni ortala
+                    SizeF textSize = e.Graphics.MeasureString(watermarkText, watermarkFont);
+                    float x = (panelMasalar.Width - textSize.Width) / 2;
+                    float y = (panelMasalar.Height - textSize.Height) / 2;
+                    
+                    // Anti-aliasing için kaliteli render
+                    e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                    e.Graphics.DrawString(watermarkText, watermarkFont, brush, x, y);
+                }
+            }
+        }
+
         private void MasalariYukle()
         {
             _masalar = _masaRepository.GetAll();
@@ -153,20 +178,21 @@ namespace KafeOtomasyonu.Forms
                     return;
             }
 
-            int panelGenislik = 120;
-            int panelYukseklik = 100;
-            int bosluk = 10;
+            // MODERN TASARIM: Daha büyük kartlar, daha geniş boşluklar
+            int panelGenislik = 140;
+            int panelYukseklik = 120;
+            int bosluk = 15;
 
             int ustBaslangicX = 150;
             for (int i = 0; i < 10 && i < _masalar.Count; i++)
             {
                 var masa = _masalar[i];
                 var panel = MasaPaneliOlustur(masa, panelGenislik, panelYukseklik);
-                panel.Location = new Point(ustBaslangicX + (i * (panelGenislik + bosluk)), bosluk);
+                panel.Location = new Point(ustBaslangicX + (i * (panelGenislik + bosluk)), 20);
                 panelMasalar.Controls.Add(panel);
             }
 
-            int altY = panelMasalar.Height - panelYukseklik - bosluk;
+            int altY = panelMasalar.Height - panelYukseklik - 20;
             for (int i = 10; i < 20 && i < _masalar.Count; i++)
             {
                 var masa = _masalar[i];
@@ -175,7 +201,7 @@ namespace KafeOtomasyonu.Forms
                 panelMasalar.Controls.Add(panel);
             }
 
-            int sagX = panelMasalar.Width - panelGenislik - bosluk;
+            int sagX = panelMasalar.Width - panelGenislik - 20;
             int ortaBaslangicY = (panelMasalar.Height - (5 * panelYukseklik + 4 * bosluk)) / 2;
             
             for (int i = 20; i < 25 && i < _masalar.Count; i++)
@@ -189,57 +215,62 @@ namespace KafeOtomasyonu.Forms
 
         private Panel MasaPaneliOlustur(Masa masa, int genislik, int yukseklik)
         {
+            // MODERN CARD DESIGN
             Panel panel = new Panel
             {
                 Size = new Size(genislik, yukseklik),
                 BackColor = masa.GetDurumRengi(),
-                BorderStyle = BorderStyle.FixedSingle,
+                BorderStyle = BorderStyle.None, // Modern: no border, use shadow instead
                 Cursor = Cursors.Hand,
                 Tag = masa
             };
 
+            // Premium card title
             Label lblMasaNo = new Label
             {
                 Text = $"Masa {masa.MasaNo}",
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
                 ForeColor = Color.White,
                 AutoSize = false,
-                Size = new Size(genislik - 10, 25),
-                Location = new Point(5, 5),
+                Size = new Size(genislik - 10, 30),
+                Location = new Point(5, 8),
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
+            // Rating stars
             string yildizlar = YildizMetniOlustur(masa.PuanOrtalamasi);
             Label lblPuan = new Label
             {
                 Text = yildizlar + $" ({masa.PuanOrtalamasi:F1})",
-                Font = new Font("Segoe UI", 9, FontStyle.Regular),
+                Font = new Font("Segoe UI", 10, FontStyle.Regular),
                 ForeColor = Color.White,
                 AutoSize = false,
-                Size = new Size(genislik - 10, 20),
-                Location = new Point(5, 35),
+                Size = new Size(genislik - 10, 22),
+                Location = new Point(5, 42),
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
+            // Status badge
             Label lblDurum = new Label
             {
                 Text = GetDurumMetni(masa.Durum),
-                Font = new Font("Segoe UI", 8, FontStyle.Regular),
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 ForeColor = Color.White,
                 AutoSize = false,
-                Size = new Size(genislik - 10, 18),
-                Location = new Point(5, 60),
+                Size = new Size(genislik - 10, 20),
+                Location = new Point(5, 70),
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
+            // Price tag
             Label lblUcret = new Label
             {
                 Text = $"{masa.SaatlikUcret:C}/saat",
-                Font = new Font("Segoe UI", 7, FontStyle.Regular),
+                Font = new Font("Segoe UI", 8.5F, FontStyle.Regular),
                 ForeColor = Color.White,
                 AutoSize = false,
-                Size = new Size(genislik - 10, 15),
-                Location = new Point(5, 78),
+                Size = new Size(genislik - 10, 18),
+                Location = new Point(5, 95),
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
@@ -248,13 +279,33 @@ namespace KafeOtomasyonu.Forms
             panel.Controls.Add(lblDurum);
             panel.Controls.Add(lblUcret);
 
+            // Click events
             panel.Click += (s, e) => MasaPaneli_Click(masa);
             foreach (Control ctrl in panel.Controls)
             {
                 ctrl.Click += (s, e) => MasaPaneli_Click(masa);
             }
 
+            // MODERN HOVER EFFECT
+            panel.MouseEnter += (s, e) =>
+            {
+                panel.BackColor = AjustarBrilho(masa.GetDurumRengi(), 1.15f);
+            };
+            panel.MouseLeave += (s, e) =>
+            {
+                panel.BackColor = masa.GetDurumRengi();
+            };
+
             return panel;
+        }
+
+        // Helper method to brighten colors for hover effect
+        private Color AjustarBrilho(Color cor, float fator)
+        {
+            int r = Math.Min(255, (int)(cor.R * fator));
+            int g = Math.Min(255, (int)(cor.G * fator));
+            int b = Math.Min(255, (int)(cor.B * fator));
+            return Color.FromArgb(cor.A, r, g, b);
         }
 
         private string YildizMetniOlustur(decimal puan)
@@ -343,6 +394,14 @@ namespace KafeOtomasyonu.Forms
                 profilForm.ShowDialog();
                 // Kullanıcı adı değişmiş olabilir, hoşgeldin mesajını güncelle
                 lblHosgeldin.Text = $"Hoş geldiniz, {SessionManager.GetCurrentUserFullName()}";
+            }
+        }
+
+        private void btnIstatistik_Click(object sender, EventArgs e)
+        {
+            using (var dashboardForm = new DashboardForm())
+            {
+                dashboardForm.ShowDialog();
             }
         }
 

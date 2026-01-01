@@ -272,6 +272,174 @@ namespace KafeOtomasyonu.Data
             return Convert.ToInt32(DatabaseHelper.ExecuteScalar(query, parameters));
         }
 
+        // ============= İSTATİSTİK METODLARI =============
+
+        /// <summary>
+        /// Kullanıcının toplam randevu sayısı
+        /// </summary>
+        public int GetKullaniciToplamRandevuSayisi(int kullaniciId)
+        {
+            string query = "SELECT COUNT(*) FROM Randevular WHERE KullaniciID = @KullaniciID";
+            var parameters = DatabaseHelper.CreateParameters(("@KullaniciID", kullaniciId));
+            return Convert.ToInt32(DatabaseHelper.ExecuteScalar(query, parameters));
+        }
+
+        /// <summary>
+        /// Kullanıcının toplam harcaması
+        /// </summary>
+        public decimal GetKullaniciToplamHarcama(int kullaniciId)
+        {
+            string query = @"SELECT ISNULL(SUM(ToplamUcret), 0) FROM Randevular 
+                           WHERE KullaniciID = @KullaniciID AND Durum IN ('Onaylandi', 'Tamamlandi')";
+            var parameters = DatabaseHelper.CreateParameters(("@KullaniciID", kullaniciId));
+            var result = DatabaseHelper.ExecuteScalar(query, parameters);
+            return result != null && result != DBNull.Value ? Convert.ToDecimal(result) : 0m;
+        }
+
+        /// <summary>
+        /// Kullanıcının en çok kullandığı masa
+        /// </summary>
+        public (int MasaID, string MasaAdi, int KullanimSayisi) GetKullaniciEnCokKullanilanMasa(int kullaniciId)
+        {
+            string query = @"SELECT TOP 1 M.MasaID, M.MasaAdi, COUNT(*) as KullanimSayisi
+                           FROM Randevular R
+                           INNER JOIN Masalar M ON R.MasaID = M.MasaID
+                           WHERE R.KullaniciID = @KullaniciID AND R.Durum IN ('Onaylandi', 'Tamamlandi')
+                           GROUP BY M.MasaID, M.MasaAdi
+                           ORDER BY COUNT(*) DESC";
+            
+            var parameters = DatabaseHelper.CreateParameters(("@KullaniciID", kullaniciId));
+            var dt = DatabaseHelper.ExecuteQuery(query, parameters);
+            
+            if (dt.Rows.Count > 0)
+            {
+                return (
+                    Convert.ToInt32(dt.Rows[0]["MasaID"]),
+                    dt.Rows[0]["MasaAdi"].ToString(),
+                    Convert.ToInt32(dt.Rows[0]["KullanimSayisi"])
+                );
+            }
+            return (0, "Henüz kullanım yok", 0);
+        }
+
+        /// <summary>
+        /// Kullanıcının ortalama kullanım süresi (saat)
+        /// </summary>
+        public decimal GetKullaniciOrtalamaKullanimSuresi(int kullaniciId)
+        {
+            string query = @"SELECT ISNULL(AVG(CAST(ToplamSaat AS FLOAT)), 0) FROM Randevular 
+                           WHERE KullaniciID = @KullaniciID AND Durum IN ('Onaylandi', 'Tamamlandi')";
+            var parameters = DatabaseHelper.CreateParameters(("@KullaniciID", kullaniciId));
+            var result = DatabaseHelper.ExecuteScalar(query, parameters);
+            return result != null && result != DBNull.Value ? Convert.ToDecimal(result) : 0m;
+        }
+
+        /// <summary>
+        /// Kullanıcının verdiği ortalama puan
+        /// </summary>
+        public decimal GetKullaniciOrtalamaPuan(int kullaniciId)
+        {
+            string query = @"SELECT ISNULL(AVG(CAST(Puan AS FLOAT)), 0) FROM Degerlendirmeler 
+                           WHERE KullaniciID = @KullaniciID";
+            var parameters = DatabaseHelper.CreateParameters(("@KullaniciID", kullaniciId));
+            var result = DatabaseHelper.ExecuteScalar(query, parameters);
+            return result != null && result != DBNull.Value ? Convert.ToDecimal(result) : 0m;
+        }
+
+        // ============= ADMİN İSTATİSTİKLERİ =============
+
+        /// <summary>
+        /// Tarih aralığına göre toplam gelir
+        /// </summary>
+        public decimal GetToplamGelir(DateTime baslangic, DateTime bitis)
+        {
+            string query = @"SELECT ISNULL(SUM(ToplamUcret), 0) FROM Randevular 
+                           WHERE RandevuTarihi BETWEEN @Baslangic AND @Bitis 
+                           AND Durum IN ('Onaylandi', 'Tamamlandi')";
+            var parameters = DatabaseHelper.CreateParameters(
+                ("@Baslangic", baslangic),
+                ("@Bitis", bitis)
+            );
+            var result = DatabaseHelper.ExecuteScalar(query, parameters);
+            return result != null && result != DBNull.Value ? Convert.ToDecimal(result) : 0m;
+        }
+
+        /// <summary>
+        /// En popüler masalar (kullanım sayısına göre)
+        /// </summary>
+        public List<(int MasaID, string MasaAdi, int KullanimSayisi, decimal ToplamGelir)> GetEnPopulerMasalar(int topN = 5)
+        {
+            string query = $@"SELECT TOP {topN} M.MasaID, M.MasaAdi, 
+                           COUNT(*) as KullanimSayisi,
+                           ISNULL(SUM(R.ToplamUcret), 0) as ToplamGelir
+                           FROM Masalar M
+                           LEFT JOIN Randevular R ON M.MasaID = R.MasaID 
+                           AND R.Durum IN ('Onaylandi', 'Tamamlandi')
+                           GROUP BY M.MasaID, M.MasaAdi
+                           ORDER BY KullanimSayisi DESC";
+            
+            var dt = DatabaseHelper.ExecuteQuery(query);
+            var liste = new List<(int, string, int, decimal)>();
+            
+            foreach (DataRow row in dt.Rows)
+            {
+                liste.Add((
+                    Convert.ToInt32(row["MasaID"]),
+                    row["MasaAdi"].ToString(),
+                    Convert.ToInt32(row["KullanimSayisi"]),
+                    Convert.ToDecimal(row["ToplamGelir"])
+                ));
+            }
+            return liste;
+        }
+
+        /// <summary>
+        /// Aktif kullanıcı sayısı (son 30 gün içinde randevusu olan)
+        /// </summary>
+        public int GetAktifKullaniciSayisi()
+        {
+            string query = @"SELECT COUNT(DISTINCT KullaniciID) FROM Randevular 
+                           WHERE OlusturmaTarihi >= DATEADD(day, -30, GETDATE())";
+            return Convert.ToInt32(DatabaseHelper.ExecuteScalar(query));
+        }
+
+        /// <summary>
+        /// Bugünkü randevular
+        /// </summary>
+        public List<Randevu> GetBugunRandevular()
+        {
+            string query = @"SELECT R.*, K.KullaniciAdi, K.AdSoyad as KullaniciAdSoyad, 
+                           M.MasaNo, M.MasaAdi
+                           FROM Randevular R
+                           INNER JOIN Kullanicilar K ON R.KullaniciID = K.KullaniciID
+                           INNER JOIN Masalar M ON R.MasaID = M.MasaID
+                           WHERE CAST(R.RandevuTarihi AS DATE) = CAST(GETDATE() AS DATE)
+                           ORDER BY R.BaslangicSaati";
+            
+            var dt = DatabaseHelper.ExecuteQuery(query);
+            return MapToRandevuList(dt);
+        }
+
+        /// <summary>
+        /// Ortalama doluluk oranı (bugün)
+        /// </summary>
+        public decimal GetOrtDolulukOrani()
+        {
+            string query = @"SELECT 
+                           CASE 
+                               WHEN (SELECT COUNT(*) FROM Masalar WHERE Aktif = 1) = 0 THEN 0
+                               ELSE 
+                                   CAST(COUNT(DISTINCT R.MasaID) AS FLOAT) / 
+                                   (SELECT COUNT(*) FROM Masalar WHERE Aktif = 1) * 100
+                           END as DolulukOrani
+                           FROM Randevular R
+                           WHERE CAST(R.RandevuTarihi AS DATE) = CAST(GETDATE() AS DATE)
+                           AND R.Durum IN ('Onaylandi', 'Dolu')";
+            
+            var result = DatabaseHelper.ExecuteScalar(query);
+            return result != null && result != DBNull.Value ? Convert.ToDecimal(result) : 0m;
+        }
+
         /// <summary>
         /// DataTable'dan Randevu listesine dönüştürme
         /// </summary>

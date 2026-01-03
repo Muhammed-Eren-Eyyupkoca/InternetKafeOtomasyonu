@@ -26,82 +26,108 @@ namespace KafeOtomasyonu.Forms
 
         private void InitializeCustomComponents()
         {
-            this.Text = $"{_masa.MasaAdi} - Detay ve Yorumlar";
-            this.Size = new Size(700, 600);
+            this.Text = $"{_masa.MasaAdi} - Detay ve Randevu";
+            this.Size = new Size(750, 650);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
+            this.BackColor = Color.White;
+
+            // ===== ÜST KISIM: MASA BİLGİLERİ VE RANDEVU BUTONU =====
+            Panel pnlUst = new Panel
+            {
+                Location = new Point(0, 0),
+                Size = new Size(750, 180),
+                BackColor = Color.FromArgb(21, 22, 41) // Dark premium
+            };
+            this.Controls.Add(pnlUst);
 
             // Başlık
             Label lblBaslik = new Label
             {
                 Text = $"🖥️  {_masa.MasaAdi}",
-                Font = new Font("Segoe UI", 16, FontStyle.Bold),
-                Location = new Point(20, 20),
+                Font = new Font("Segoe UI", 20, FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(25, 15),
                 AutoSize = true
             };
-            this.Controls.Add(lblBaslik);
+            pnlUst.Controls.Add(lblBaslik);
 
-            // Puan ve bilgiler
-            Panel pnlBilgi = new Panel
-            {
-                Location = new Point(20, 60),
-                Size = new Size(640, 80),
-                BorderStyle = BorderStyle.FixedSingle,
-                BackColor = Color.FromArgb(250, 250, 250)
-            };
-
+            // Puan bilgisi
             decimal ortalamaPuan = _degerlendirmeRepo.GetOrtalamaPuan(_masa.MasaID);
             int degerlendirmeSayisi = _degerlendirmeRepo.GetDegerlendirmeSayisi(_masa.MasaID);
 
             Label lblPuan = new Label
             {
-                Text = $"⭐ {ortalamaPuan:0.0}",
-                Location = new Point(20, 15),
-                Font = new Font("Segoe UI", 24, FontStyle.Bold),
+                Text = $"⭐ {ortalamaPuan:0.0} ({degerlendirmeSayisi} değerlendirme)",
+                Font = new Font("Segoe UI", 12),
                 ForeColor = Color.FromArgb(255, 193, 7),
+                Location = new Point(25, 55),
                 AutoSize = true
             };
-            pnlBilgi.Controls.Add(lblPuan);
+            pnlUst.Controls.Add(lblPuan);
 
-            Label lblDegerlendirmeSayisi = new Label
-            {
-                Text = $"{degerlendirmeSayisi} değerlendirme",
-                Location = new Point(20, 50),
-                Font = new Font("Segoe UI", 10),
-                ForeColor = Color.Gray,
-                AutoSize = true
-            };
-            pnlBilgi.Controls.Add(lblDegerlendirmeSayisi);
-
+            // Ücret bilgisi
             Label lblUcret = new Label
             {
                 Text = $"💰 {_masa.SaatlikUcret:C}/saat",
-                Location = new Point(300, 25),
                 Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                ForeColor = Color.FromArgb(76, 175, 80),
+                ForeColor = Color.FromArgb(85, 165, 134),
+                Location = new Point(25, 85),
                 AutoSize = true
             };
-            pnlBilgi.Controls.Add(lblUcret);
+            pnlUst.Controls.Add(lblUcret);
 
+            // Durum bilgisi
             Label lblDurum = new Label
             {
-                Text = $"📊 {_masa.Durum}",
-                Location = new Point(500, 25),
+                Text = $"📊 Durum: {_masa.Durum}",
                 Font = new Font("Segoe UI", 12),
-                ForeColor = _masa.Durum == "Aktif" ? Color.FromArgb(76, 175, 80) : Color.Gray,
+                ForeColor = Color.White,
+                Location = new Point(25, 115),
                 AutoSize = true
             };
-            pnlBilgi.Controls.Add(lblDurum);
+            pnlUst.Controls.Add(lblDurum);
 
-            this.Controls.Add(pnlBilgi);
+            // ===== RANDEVU AL BUTONU =====
+            Button btnRandevuAl = new Button
+            {
+                Text = "📅 RANDEVU AL",
+                Location = new Point(500, 40),
+                Size = new Size(200, 60),
+                BackColor = Color.FromArgb(43, 128, 200),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
+            };
+            btnRandevuAl.FlatAppearance.BorderSize = 0;
+            btnRandevuAl.Click += BtnRandevuAl_Click;
+            pnlUst.Controls.Add(btnRandevuAl);
 
-            // Yorumlar başlık
+            // Kapat butonu
+            Button btnKapat = new Button
+            {
+                Text = "❌ KAPAT",
+                Location = new Point(500, 115),
+                Size = new Size(200, 45),
+                BackColor = Color.FromArgb(200, 60, 60),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
+            };
+            btnKapat.FlatAppearance.BorderSize = 0;
+            btnKapat.Click += (s, e) => this.Close();
+            pnlUst.Controls.Add(btnKapat);
+
+            // ===== ALT KISIM: KULLANICI YORUMLARI =====
             Label lblYorumlarBaslik = new Label
             {
                 Text = "💬 KULLANICI YORUMLARI",
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                Location = new Point(20, 160),
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                ForeColor = Color.FromArgb(21, 22, 41),
+                Location = new Point(25, 195),
                 AutoSize = true
             };
             this.Controls.Add(lblYorumlarBaslik);
@@ -109,27 +135,15 @@ namespace KafeOtomasyonu.Forms
             // Yorumlar paneli
             flowPanel = new FlowLayoutPanel
             {
-                Location = new Point(20, 195),
-                Size = new Size(640, 330),
+                Location = new Point(25, 235),
+                Size = new Size(685, 360),
                 AutoScroll = true,
                 FlowDirection = FlowDirection.TopDown,
                 WrapContents = false,
-                BorderStyle = BorderStyle.FixedSingle
+                BorderStyle = BorderStyle.FixedSingle,
+                BackColor = Color.FromArgb(248, 249, 250)
             };
             this.Controls.Add(flowPanel);
-
-            // Kapat butonu
-            SimpleButton btnKapat = new SimpleButton
-            {
-                Text = "❌ Kapat",
-                Location = new Point(560, 535),
-                Size = new Size(100, 35),
-                Appearance = { BackColor = Color.FromArgb(158, 158, 158), Font = new Font("Segoe UI", 10, FontStyle.Bold) }
-            };
-            btnKapat.Appearance.Options.UseBackColor = true;
-            btnKapat.Appearance.Options.UseFont = true;
-            btnKapat.Click += (s, e) => this.Close();
-            this.Controls.Add(btnKapat);
         }
 
         private void MasaDetayForm_Load(object sender, EventArgs e)
@@ -141,9 +155,9 @@ namespace KafeOtomasyonu.Forms
                 Label lblBos = new Label
                 {
                     Text = "Henüz bu masa için değerlendirme yapılmamış.",
-                    Font = new Font("Segoe UI", 11),
+                    Font = new Font("Segoe UI", 12),
                     ForeColor = Color.Gray,
-                    Margin = new Padding(10),
+                    Margin = new Padding(15),
                     AutoSize = true
                 };
                 flowPanel.Controls.Add(lblBos);
@@ -161,13 +175,13 @@ namespace KafeOtomasyonu.Forms
         {
             Panel panel = new Panel
             {
-                Width = 600,
-                MinimumSize = new Size(600, 100),
+                Width = 650,
+                MinimumSize = new Size(650, 90),
                 AutoSize = true,
-                BorderStyle = BorderStyle.FixedSingle,
-                Margin = new Padding(5),
+                BorderStyle = BorderStyle.None,
+                Margin = new Padding(8),
                 BackColor = Color.White,
-                Padding = new Padding(10)
+                Padding = new Padding(15)
             };
 
             // Yıldızlar
@@ -175,8 +189,8 @@ namespace KafeOtomasyonu.Forms
             Label lblYildizlar = new Label
             {
                 Text = yildizlar,
-                Location = new Point(10, 10),
-                Font = new Font("Segoe UI", 14),
+                Location = new Point(15, 12),
+                Font = new Font("Segoe UI", 16),
                 ForeColor = Color.FromArgb(255, 193, 7),
                 AutoSize = true
             };
@@ -186,9 +200,9 @@ namespace KafeOtomasyonu.Forms
             Label lblKullanici = new Label
             {
                 Text = $"{degerlendirme.KullaniciAdSoyad}  •  {degerlendirme.OlusturmaTarihi:dd MMMM yyyy}",
-                Location = new Point(10, 40),
-                Width = 580,
-                Font = new Font("Segoe UI", 9),
+                Location = new Point(15, 45),
+                Width = 620,
+                Font = new Font("Segoe UI", 10),
                 ForeColor = Color.Gray,
                 AutoSize = false
             };
@@ -200,23 +214,34 @@ namespace KafeOtomasyonu.Forms
                 Label lblYorum = new Label
                 {
                     Text = degerlendirme.Yorum,
-                    Location = new Point(10, 65),
-                    Width = 580,
-                    Font = new Font("Segoe UI", 10),
+                    Location = new Point(15, 70),
+                    Width = 620,
+                    Font = new Font("Segoe UI", 11),
+                    ForeColor = Color.FromArgb(50, 50, 50),
                     AutoSize = true,
-                    MaximumSize = new Size(580, 0)
+                    MaximumSize = new Size(620, 0)
                 };
                 panel.Controls.Add(lblYorum);
-
-                // Panel yüksekliğini yoruma göre ayarla
-                panel.Height = lblYorum.Bottom + 10;
+                panel.Height = lblYorum.Bottom + 15;
             }
             else
             {
-                panel.Height = 75;
+                panel.Height = 80;
             }
 
             return panel;
+        }
+
+        private void BtnRandevuAl_Click(object sender, EventArgs e)
+        {
+            using (var randevuDialog = new RandevuDialogForm(_masa))
+            {
+                if (randevuDialog.ShowDialog() == DialogResult.OK)
+                {
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+            }
         }
     }
 }

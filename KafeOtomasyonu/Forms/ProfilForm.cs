@@ -34,6 +34,7 @@ namespace KafeOtomasyonu.Forms
 
         private void InitializeCustomComponents()
         {
+
             this.Text = "Profilim";
             this.Size = new Size(550, 500);
             this.StartPosition = FormStartPosition.CenterScreen;

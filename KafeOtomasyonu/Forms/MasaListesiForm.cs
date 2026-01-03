@@ -37,23 +37,18 @@ namespace KafeOtomasyonu.Forms
 
         private void panelMasalar_Paint(object sender, PaintEventArgs e)
         {
-            // WATERMARK: "İnternet Kafe" yazısını ortaya çiz
             string watermarkText = "İnternet Kafe";
             using (Font watermarkFont = new Font("Segoe UI", 120, FontStyle.Bold))
             {
-                // Renk: #f6f6f2 (Açık gri, çok hafif)
                 Color watermarkColor = ColorTranslator.FromHtml("#f6f6f2");
-                // Çok şeffaf yap (alpha: 15)
                 Color transparentColor = Color.FromArgb(15, watermarkColor.R, watermarkColor.G, watermarkColor.B);
                 
                 using (SolidBrush brush = new SolidBrush(transparentColor))
                 {
-                    // Metni ortala
                     SizeF textSize = e.Graphics.MeasureString(watermarkText, watermarkFont);
                     float x = (panelMasalar.Width - textSize.Width) / 2;
                     float y = (panelMasalar.Height - textSize.Height) / 2;
                     
-                    // Anti-aliasing için kaliteli render
                     e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
                     e.Graphics.DrawString(watermarkText, watermarkFont, brush, x, y);
                 }
@@ -178,7 +173,6 @@ namespace KafeOtomasyonu.Forms
                     return;
             }
 
-            // MODERN TASARIM: Daha büyük kartlar, daha geniş boşluklar
             int panelGenislik = 140;
             int panelYukseklik = 120;
             int bosluk = 15;
@@ -215,17 +209,15 @@ namespace KafeOtomasyonu.Forms
 
         private Panel MasaPaneliOlustur(Masa masa, int genislik, int yukseklik)
         {
-            // MODERN CARD DESIGN
             Panel panel = new Panel
             {
                 Size = new Size(genislik, yukseklik),
                 BackColor = masa.GetDurumRengi(),
-                BorderStyle = BorderStyle.None, // Modern: no border, use shadow instead
+                BorderStyle = BorderStyle.None,
                 Cursor = Cursors.Hand,
                 Tag = masa
             };
 
-            // Premium card title
             Label lblMasaNo = new Label
             {
                 Text = $"Masa {masa.MasaNo}",
@@ -237,7 +229,6 @@ namespace KafeOtomasyonu.Forms
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Rating stars
             string yildizlar = YildizMetniOlustur(masa.PuanOrtalamasi);
             Label lblPuan = new Label
             {
@@ -250,7 +241,6 @@ namespace KafeOtomasyonu.Forms
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Status badge
             Label lblDurum = new Label
             {
                 Text = GetDurumMetni(masa.Durum),
@@ -262,7 +252,6 @@ namespace KafeOtomasyonu.Forms
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
-            // Price tag
             Label lblUcret = new Label
             {
                 Text = $"{masa.SaatlikUcret:C}/saat",
@@ -279,14 +268,13 @@ namespace KafeOtomasyonu.Forms
             panel.Controls.Add(lblDurum);
             panel.Controls.Add(lblUcret);
 
-            // Click events
-            panel.Click += (s, e) => MasaPaneli_Click(masa);
+            // MASA TIKLANDIGINDA RANDEVU DIALOG ACILIR
+            panel.Click += (s, e) => AcRandevuDialog(masa);
             foreach (Control ctrl in panel.Controls)
             {
-                ctrl.Click += (s, e) => MasaPaneli_Click(masa);
+                ctrl.Click += (s, e) => AcRandevuDialog(masa);
             }
 
-            // MODERN HOVER EFFECT
             panel.MouseEnter += (s, e) =>
             {
                 panel.BackColor = AjustarBrilho(masa.GetDurumRengi(), 1.15f);
@@ -299,7 +287,19 @@ namespace KafeOtomasyonu.Forms
             return panel;
         }
 
-        // Helper method to brighten colors for hover effect
+        // MASA DETAY FORMU AÇAR
+        private void AcRandevuDialog(Masa masa)
+        {
+            using (var detayForm = new MasaDetayForm(masa))
+            {
+                if (detayForm.ShowDialog() == DialogResult.OK)
+                {
+                    MasalariYukle();
+                    MasaPanelleriniOlustur();
+                }
+            }
+        }
+
         private Color AjustarBrilho(Color cor, float fator)
         {
             int r = Math.Min(255, (int)(cor.R * fator));
@@ -342,18 +342,6 @@ namespace KafeOtomasyonu.Forms
             }
         }
 
-        private void MasaPaneli_Click(Masa masa)
-        {
-            using (var detayForm = new MasaDetayForm(masa))
-            {
-                if (detayForm.ShowDialog() == DialogResult.OK)
-                {
-                    MasalariYukle();
-                    MasaPanelleriniOlustur();
-                }
-            }
-        }
-
         private void RefreshTimer_Tick(object sender, EventArgs e)
         {
             MasalariYukle();
@@ -381,7 +369,6 @@ namespace KafeOtomasyonu.Forms
             using (var randevularimForm = new RandevularimForm())
             {
                 randevularimForm.ShowDialog();
-                // Randevu değişiklikleri olabilir, masaları yenile
                 MasalariYukle();
                 MasaPanelleriniOlustur();
             }
@@ -392,7 +379,6 @@ namespace KafeOtomasyonu.Forms
             using (var profilForm = new ProfilForm())
             {
                 profilForm.ShowDialog();
-                // Kullanıcı adı değişmiş olabilir, hoşgeldin mesajını güncelle
                 lblHosgeldin.Text = $"Hoş geldiniz, {SessionManager.GetCurrentUserFullName()}";
             }
         }

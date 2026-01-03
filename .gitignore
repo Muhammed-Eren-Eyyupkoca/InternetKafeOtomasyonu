@@ -145,9 +145,71 @@ artifacts/
 # Cursor AI
 .cursor/
 terminals/
+agent-tools/
 
 # DevExpress
 *.licx
 
 # Local configuration (her geliştirici için farklı olabilir)
 **/App.config
+!**/App.config.example
+
+# Secrets and sensitive files
+*.pfx
+*.p12
+*.key
+*.pem
+secrets.json
+appsettings.Development.json
+appsettings.Local.json
+.env
+.env.*
+!.env.example
+
+# Debug symbols
+*.pdb
+
+# Publish profiles
+PublishProfiles/
+
+# Azure
+.azure/
+
+# Logs
+*.log
+logs/
+
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+**/Temp/
+
+# NuGet
+*.nuget.props
+*.nuget.targets
+
+# Test coverage
+coverage/
+*.coverage
+*.coveragexml
+
+# JetBrains
+.idea/
+*.sln.iml
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Project specific ignores
+ADIM_*.md

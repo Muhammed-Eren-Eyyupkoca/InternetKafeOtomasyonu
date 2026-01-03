@@ -257,6 +257,38 @@ cd KafeOtomasyonu
 
 ---
 
+## 📌 9. Güncelleme
+
+**Masa Detay Sayfası Yenilendi ve Hata Düzeltmeleri:**
+
+- **Masa Detay Formu Yeniden Tasarlandı:**
+  - Üst kısım: Koyu premium arka plan (#151629) ile masa bilgileri
+  - Masa adı, puan, ücret ve durum bilgileri net gösterim
+  - Büyük ve belirgin "📅 RANDEVU AL" butonu (mavi, 200x60px)
+  - "❌ KAPAT" butonu (kırmızı, 200x45px)
+  - Alt kısım: Kullanıcı yorumları listesi (açık arka plan)
+
+- **Randevu Alma Akışı İyileştirildi:**
+  - Masaya tıklayınca detay sayfası açılıyor
+  - Detay sayfasında "RANDEVU AL" butonuna tıklayınca randevu formu açılıyor
+  - Daha sezgisel ve kullanıcı dostu akış
+  - Yorumları görüntülerken randevu alabilme imkanı
+
+- **Hata Düzeltmeleri:**
+  - Masa tıklama olayları düzeltildi
+  - Buton görünürlük sorunları giderildi
+  - Form yükleme sırası optimize edildi
+  - Dosya kaydetme ve derleme sorunları çözüldü
+
+- **UI/UX İyileştirmeleri:**
+  - Yorum kartları modernize edildi (beyaz arka plan, gölge efekti)
+  - Yıldız puanlama daha büyük ve belirgin (16px font)
+  - Kullanıcı adı ve tarih bilgisi düzenli gösterim
+  - Responsive tasarım ile farklı ekran boyutlarına uyum
+  - Tutarlı renk şeması tüm ekranlarda
+
+---
+
 **Geliştirici:** Muhammed Eren Eyyüpkoca
 
 ---

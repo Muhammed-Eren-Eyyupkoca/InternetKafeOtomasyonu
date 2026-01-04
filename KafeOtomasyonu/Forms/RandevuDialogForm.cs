@@ -14,12 +14,13 @@ namespace KafeOtomasyonu.Forms
         private readonly Masa _masa;
         private readonly RandevuRepository _randevuRepository;
         private readonly MasaRepository _masaRepository;
-        private const decimal SAATLIK_UCRET = 75m; // Saatlik ücret 75 TL
+        private decimal _saatlikUcret; // Masanın saatlik ücreti
 
         public RandevuDialogForm(Masa masa)
         {
             InitializeComponent();
             _masa = masa;
+            _saatlikUcret = masa.SaatlikUcret; // Masanın fiyatını al
             _randevuRepository = new RandevuRepository();
             _masaRepository = new MasaRepository();
         }
@@ -27,7 +28,7 @@ namespace KafeOtomasyonu.Forms
         private void RandevuDialogForm_Load(object sender, EventArgs e)
         {
             lblMasaAdi.Text = _masa.MasaAdi ?? $"Masa {_masa.MasaNo}";
-            lblSaatlikUcret.Text = $"Saatlik Ücret: {SAATLIK_UCRET:C}";
+            lblSaatlikUcret.Text = $"Saatlik Ücret: {_saatlikUcret:C}";
 
             // Tarih seçiciyi ayarla - bugünden itibaren seçilebilir
             dateRandevu.Properties.MinValue = DateTime.Today;
@@ -82,7 +83,7 @@ namespace KafeOtomasyonu.Forms
                     return;
 
                 int saatSayisi = Convert.ToInt32(spinSaat.EditValue);
-                decimal toplamUcret = saatSayisi * SAATLIK_UCRET;
+                decimal toplamUcret = saatSayisi * _saatlikUcret;
 
                 lblToplamUcret.Text = $"Süre: {saatSayisi} saat - Toplam Ücret: {toplamUcret:C}";
                 lblToplamUcret.ForeColor = System.Drawing.Color.Green;
@@ -166,7 +167,7 @@ namespace KafeOtomasyonu.Forms
                     Durum = "Beklemede"
                 };
 
-                randevu.HesaplaToplamUcret(SAATLIK_UCRET);
+                randevu.HesaplaToplamUcret(_saatlikUcret);
 
                 int randevuId = _randevuRepository.Add(randevu);
 

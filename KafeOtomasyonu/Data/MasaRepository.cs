@@ -77,6 +77,19 @@ namespace KafeOtomasyonu.Data
         }
 
         /// <summary>
+        /// Masa fiyatını güncelle
+        /// </summary>
+        public void UpdateFiyat(int masaId, decimal yeniFiyat)
+        {
+            string query = "UPDATE Masalar SET SaatlikUcret = @SaatlikUcret WHERE MasaID = @MasaID";
+            var parameters = DatabaseHelper.CreateParameters(
+                ("@SaatlikUcret", yeniFiyat),
+                ("@MasaID", masaId)
+            );
+            DatabaseHelper.ExecuteNonQuery(query, parameters);
+        }
+
+        /// <summary>
         /// Boş masaları getir
         /// </summary>
         public List<Masa> GetBosMasalar()

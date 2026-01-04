@@ -152,6 +152,7 @@ agent-tools/
 
 # Local configuration (her geliştirici için farklı olabilir)
 **/App.config
+**/gemini-config.json
 !**/App.config.example
 
 # Secrets and sensitive files
@@ -213,3 +214,23 @@ Desktop.ini
 
 # Project specific ignores
 ADIM_*.md
+
+# Launch settings (may contain local paths)
+**/launchSettings.json
+
+# Crash dumps
+*.dmp
+crashdumps/
+
+# DevExpress designer files that might regenerate
+*.designer.cache
+
+# Local test databases
+*.sqlite
+*.db
+
+# IDE workspace settings
+*.code-workspace
+
+# NuGet fallback folder
+.nuget/

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+using KafeOtomasyonu.Controls;
 using KafeOtomasyonu.Data;
 using KafeOtomasyonu.Helpers;
 using KafeOtomasyonu.Models;
@@ -15,6 +17,13 @@ namespace KafeOtomasyonu.Forms
         private readonly RandevuRepository _randevuRepository;
         private List<Masa> _masalar;
         private Timer _refreshTimer;
+        
+        // ChatBot bileşenleri
+        private RoundButton btnChatBot;
+        private ChatBotPanel chatBotPanel;
+        private Timer animationTimer;
+        private bool isAnimating = false;
+        private bool isOpening = false;
 
         public MasaListesiForm()
         {
@@ -26,13 +35,156 @@ namespace KafeOtomasyonu.Forms
             _refreshTimer.Interval = 30000;
             _refreshTimer.Tick += RefreshTimer_Tick;
             _refreshTimer.Start();
+            
+            // ChatBot'u başlat
+            InitializeChatBot();
+        }
+        
+        private void InitializeChatBot()
+        {
+            // ChatBot Panel
+            chatBotPanel = new ChatBotPanel
+            {
+                Width = 0, // Başlangıçta kapalı
+                Visible = false
+            };
+            chatBotPanel.CloseRequested += (s, e) => CloseChatBot();
+            this.Controls.Add(chatBotPanel);
+            chatBotPanel.BringToFront();
+
+            // Yuvarlak ChatBot Butonu
+            btnChatBot = new RoundButton
+            {
+                Size = new Size(70, 70),
+                ButtonColor = Color.FromArgb(138, 43, 226), // Mor
+                HoverColor = Color.FromArgb(155, 89, 182),
+                Text = "🤖",
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+            };
+            btnChatBot.Click += BtnChatBot_Click;
+            this.Controls.Add(btnChatBot);
+            btnChatBot.BringToFront();
+
+            // Animasyon timer'ı
+            animationTimer = new Timer();
+            animationTimer.Interval = 10;
+            animationTimer.Tick += AnimationTimer_Tick;
+
+            // Buton pozisyonunu ayarla
+            this.Resize += (s, e) => UpdateChatBotButtonPosition();
+        }
+
+        private void UpdateChatBotButtonPosition()
+        {
+            if (btnChatBot != null)
+            {
+                int rightOffset = chatBotPanel.Visible ? chatBotPanel.Width + 20 : 20;
+                btnChatBot.Location = new Point(this.ClientSize.Width - btnChatBot.Width - rightOffset, 
+                                                 this.ClientSize.Height - btnChatBot.Height - 80);
+            }
+        }
+
+        private void BtnChatBot_Click(object sender, EventArgs e)
+        {
+            if (isAnimating) return;
+
+            if (chatBotPanel.Visible)
+                CloseChatBot();
+            else
+                OpenChatBot();
+        }
+
+        private void OpenChatBot()
+        {
+            if (isAnimating) return;
+            
+            isOpening = true;
+            isAnimating = true;
+            chatBotPanel.Width = 0;
+            chatBotPanel.Visible = true;
+            chatBotPanel.BringToFront();
+            animationTimer.Start();
+        }
+
+        private void CloseChatBot()
+        {
+            if (isAnimating) return;
+            
+            isOpening = false;
+            isAnimating = true;
+            animationTimer.Start();
+        }
+
+        private void AnimationTimer_Tick(object sender, EventArgs e)
+        {
+            int targetWidth = 400;
+            int step = 30;
+
+            if (isOpening)
+            {
+                chatBotPanel.Width += step;
+                if (chatBotPanel.Width >= targetWidth)
+                {
+                    chatBotPanel.Width = targetWidth;
+                    animationTimer.Stop();
+                    isAnimating = false;
+                }
+            }
+            else
+            {
+                chatBotPanel.Width -= step;
+                if (chatBotPanel.Width <= 0)
+                {
+                    chatBotPanel.Width = 0;
+                    chatBotPanel.Visible = false;
+                    animationTimer.Stop();
+                    isAnimating = false;
+                }
+            }
+
+            UpdateChatBotButtonPosition();
         }
         
         private void MasaListesiForm_Load(object sender, EventArgs e)
         {
             lblHosgeldin.Text = $"Hoş geldiniz, {SessionManager.GetCurrentUserFullName()}";
             MasalariYukle();
+            MasaFiyatlariniGuncelle(); // Fiyatları güncelle
             MasaPanelleriniOlustur();
+            UpdateChatBotButtonPosition();
+        }
+        
+        private void MasaFiyatlariniGuncelle()
+        {
+            foreach (var masa in _masalar)
+            {
+                decimal yeniFiyat;
+                
+                // VIP Masalar (7, 8, 17, 18, 23) - 100 TL
+                if (masa.MasaNo == 7 || masa.MasaNo == 8 || masa.MasaNo == 17 || 
+                    masa.MasaNo == 18 || masa.MasaNo == 23)
+                {
+                    yeniFiyat = 100.00m;
+                }
+                // Premium Masalar (3, 4, 13, 14, 21-25) - 75 TL
+                else if (masa.MasaNo == 3 || masa.MasaNo == 4 || masa.MasaNo == 13 || 
+                         masa.MasaNo == 14 || masa.MasaNo >= 21)
+                {
+                    yeniFiyat = 75.00m;
+                }
+                // Standart Masalar - 50 TL
+                else
+                {
+                    yeniFiyat = 50.00m;
+                }
+                
+                // Fiyat farklıysa güncelle
+                if (masa.SaatlikUcret != yeniFiyat)
+                {
+                    masa.SaatlikUcret = yeniFiyat;
+                    _masaRepository.UpdateFiyat(masa.MasaID, yeniFiyat);
+                }
+            }
         }
 
         private void panelMasalar_Paint(object sender, PaintEventArgs e)
@@ -80,20 +232,20 @@ namespace KafeOtomasyonu.Forms
                 
                 if (i == 7 || i == 8 || i == 17 || i == 18 || i == 23)
                 {
-                    pcOzellik = "Intel Core i9, RTX 3080, 32GB RAM, 240Hz Monitor";
-                    ucret = 20.00m;
+                    pcOzellik = "Intel Core i9, RTX 4080, 32GB RAM, 240Hz Monitor";
+                    ucret = 100.00m; // VIP - 100 TL/saat
                     aciklama = "VIP Masa - Yüksek Performans";
                 }
                 else if (i == 3 || i == 4 || i == 13 || i == 14 || i >= 21)
                 {
-                    pcOzellik = "Intel Core i7, RTX 3070, 32GB RAM, 165Hz Monitor";
-                    ucret = 18.00m;
+                    pcOzellik = "Intel Core i7, RTX 4070, 32GB RAM, 165Hz Monitor";
+                    ucret = 75.00m; // Premium - 75 TL/saat
                     aciklama = "Premium Masa";
                 }
                 else
                 {
-                    pcOzellik = "Intel Core i5, RTX 3060, 16GB RAM, 144Hz Monitor";
-                    ucret = 15.00m;
+                    pcOzellik = "Intel Core i5, RTX 4060, 16GB RAM, 144Hz Monitor";
+                    ucret = 50.00m; // Standart - 50 TL/saat
                     aciklama = "Standart Gaming Masa";
                 }
 
@@ -334,11 +486,11 @@ namespace KafeOtomasyonu.Forms
         {
             switch (durum)
             {
-                case "Bos": return "BOŞ";
-                case "Dolu": return "DOLU";
-                case "Rezerve": return "REZERVE";
-                case "Bakim": return "BAKIM";
-                default: return durum.ToUpper();
+                case "Bos": return "UYGUN";
+                case "Dolu": return "UYGUN DEĞİL";
+                case "Rezerve": return "UYGUN DEĞİL";
+                case "Bakim": return "UYGUN DEĞİL";
+                default: return "UYGUN DEĞİL";
             }
         }
 
@@ -396,6 +548,8 @@ namespace KafeOtomasyonu.Forms
             base.OnFormClosing(e);
             _refreshTimer?.Stop();
             _refreshTimer?.Dispose();
+            animationTimer?.Stop();
+            animationTimer?.Dispose();
         }
     }
 }

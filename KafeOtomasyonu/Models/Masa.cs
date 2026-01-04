@@ -24,7 +24,7 @@ namespace KafeOtomasyonu.Models
 
         public Masa()
         {
-            SaatlikUcret = 75.00m; // Saatlik ücret 75 TL
+            SaatlikUcret = 50.00m; // Varsayılan saatlik ücret 50 TL
             Durum = "Bos";
             Aktif = true;
             OlusturmaTarihi = DateTime.Now;
@@ -32,22 +32,25 @@ namespace KafeOtomasyonu.Models
 
         /// <summary>
         /// Masa durumuna göre renk döndürür
+        /// Uygun (Boş) = Yeşil, Uygun Değil (Dolu/Rezerve/Bakım) = Kırmızı
         /// </summary>
         public System.Drawing.Color GetDurumRengi()
         {
             switch (Durum)
             {
                 case "Bos":
-                    return System.Drawing.Color.FromArgb(76, 175, 80); // Yeşil
-                case "Dolu":
-                    return System.Drawing.Color.FromArgb(244, 67, 54); // Kırmızı
-                case "Rezerve":
-                    return System.Drawing.Color.FromArgb(255, 152, 0); // Turuncu
-                case "Bakim":
-                    return System.Drawing.Color.FromArgb(158, 158, 158); // Gri
+                    return System.Drawing.Color.FromArgb(46, 204, 113); // Yeşil - Uygun
                 default:
-                    return System.Drawing.Color.FromArgb(33, 150, 243); // Mavi
+                    return System.Drawing.Color.FromArgb(231, 76, 60); // Kırmızı - Uygun Değil
             }
+        }
+        
+        /// <summary>
+        /// Masa uygun mu (Boş durumunda mı) kontrol eder
+        /// </summary>
+        public bool IsUygun()
+        {
+            return Durum == "Bos";
         }
     }
 }

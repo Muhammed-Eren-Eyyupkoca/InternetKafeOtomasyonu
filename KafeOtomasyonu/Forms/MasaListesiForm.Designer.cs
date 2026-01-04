@@ -162,15 +162,15 @@ namespace KafeOtomasyonu.Forms
             // 
             // lblBaslik - Main title
             // 
-            this.lblBaslik.Appearance.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.lblBaslik.Appearance.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
             this.lblBaslik.Appearance.ForeColor = System.Drawing.Color.White;
             this.lblBaslik.Appearance.Options.UseFont = true;
             this.lblBaslik.Appearance.Options.UseForeColor = true;
-            this.lblBaslik.Location = new System.Drawing.Point(25, 15);
+            this.lblBaslik.Location = new System.Drawing.Point(25, 18);
             this.lblBaslik.Name = "lblBaslik";
-            this.lblBaslik.Size = new System.Drawing.Size(320, 37);
+            this.lblBaslik.Size = new System.Drawing.Size(280, 33);
             this.lblBaslik.TabIndex = 0;
-            this.lblBaslik.Text = "🎮 Kafe Gaming - Masa Seçimi";
+            this.lblBaslik.Text = "🎮 Kafe Gaming";
             // 
             // panelMasalar - Dark premium background with watermark
             // 
@@ -182,13 +182,11 @@ namespace KafeOtomasyonu.Forms
             this.panelMasalar.TabIndex = 1;
             this.panelMasalar.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMasalar_Paint);
             // 
-            // panelLegend - Bottom legend bar
+            // panelLegend - Bottom legend bar (Sadece Uygun ve Uygun Değil)
             // 
             this.panelLegend.BackColor = System.Drawing.ColorTranslator.FromHtml("#151629"); // Dark premium
             this.panelLegend.Controls.Add(this.lblDolu);
             this.panelLegend.Controls.Add(this.pnlDolu);
-            this.panelLegend.Controls.Add(this.lblRezerve);
-            this.panelLegend.Controls.Add(this.pnlRezerve);
             this.panelLegend.Controls.Add(this.lblBos);
             this.panelLegend.Controls.Add(this.pnlBos);
             this.panelLegend.Controls.Add(this.lblLegendBaslik);
@@ -210,9 +208,9 @@ namespace KafeOtomasyonu.Forms
             this.lblLegendBaslik.TabIndex = 0;
             this.lblLegendBaslik.Text = "Masa Durumları:";
             // 
-            // pnlBos - Green indicator
+            // pnlBos - Green indicator (Uygun)
             // 
-            this.pnlBos.BackColor = System.Drawing.ColorTranslator.FromHtml("#55a586"); // Success green
+            this.pnlBos.BackColor = System.Drawing.Color.FromArgb(46, 204, 113); // Yeşil - Uygun
             this.pnlBos.Location = new System.Drawing.Point(160, 13);
             this.pnlBos.Name = "pnlBos";
             this.pnlBos.Size = new System.Drawing.Size(35, 24);
@@ -220,55 +218,51 @@ namespace KafeOtomasyonu.Forms
             // 
             // lblBos
             // 
-            this.lblBos.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblBos.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblBos.Appearance.ForeColor = System.Drawing.Color.White;
             this.lblBos.Appearance.Options.UseFont = true;
             this.lblBos.Appearance.Options.UseForeColor = true;
             this.lblBos.Location = new System.Drawing.Point(205, 16);
             this.lblBos.Name = "lblBos";
-            this.lblBos.Size = new System.Drawing.Size(24, 19);
+            this.lblBos.Size = new System.Drawing.Size(50, 19);
             this.lblBos.TabIndex = 2;
-            this.lblBos.Text = "Boş";
+            this.lblBos.Text = "Uygun";
             // 
-            // pnlRezerve - Gold indicator
+            // pnlRezerve - (Artık kullanılmıyor ama tanım kalsın)
             // 
-            this.pnlRezerve.BackColor = System.Drawing.ColorTranslator.FromHtml("#ceb951"); // Warning gold
-            this.pnlRezerve.Location = new System.Drawing.Point(270, 13);
+            this.pnlRezerve.BackColor = System.Drawing.ColorTranslator.FromHtml("#ceb951");
+            this.pnlRezerve.Location = new System.Drawing.Point(-100, -100);
             this.pnlRezerve.Name = "pnlRezerve";
-            this.pnlRezerve.Size = new System.Drawing.Size(35, 24);
+            this.pnlRezerve.Size = new System.Drawing.Size(1, 1);
             this.pnlRezerve.TabIndex = 3;
+            this.pnlRezerve.Visible = false;
             // 
-            // lblRezerve
+            // lblRezerve - (Artık kullanılmıyor ama tanım kalsın)
             // 
-            this.lblRezerve.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.lblRezerve.Appearance.ForeColor = System.Drawing.Color.White;
-            this.lblRezerve.Appearance.Options.UseFont = true;
-            this.lblRezerve.Appearance.Options.UseForeColor = true;
-            this.lblRezerve.Location = new System.Drawing.Point(315, 16);
+            this.lblRezerve.Location = new System.Drawing.Point(-100, -100);
             this.lblRezerve.Name = "lblRezerve";
-            this.lblRezerve.Size = new System.Drawing.Size(50, 19);
             this.lblRezerve.TabIndex = 4;
-            this.lblRezerve.Text = "Rezerve";
+            this.lblRezerve.Visible = false;
             // 
-            // pnlDolu - Red/Pink indicator
+            // pnlDolu - Red indicator (Uygun Değil)
             // 
-            this.pnlDolu.BackColor = System.Drawing.ColorTranslator.FromHtml("#c82b6d"); // Error pink-red
-            this.pnlDolu.Location = new System.Drawing.Point(410, 13);
+            this.pnlDolu.BackColor = System.Drawing.Color.FromArgb(231, 76, 60); // Kırmızı - Uygun Değil
+            this.pnlDolu.Location = new System.Drawing.Point(280, 13);
             this.pnlDolu.Name = "pnlDolu";
             this.pnlDolu.Size = new System.Drawing.Size(35, 24);
             this.pnlDolu.TabIndex = 5;
             // 
             // lblDolu
             // 
-            this.lblDolu.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblDolu.Appearance.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblDolu.Appearance.ForeColor = System.Drawing.Color.White;
             this.lblDolu.Appearance.Options.UseFont = true;
             this.lblDolu.Appearance.Options.UseForeColor = true;
-            this.lblDolu.Location = new System.Drawing.Point(455, 16);
+            this.lblDolu.Location = new System.Drawing.Point(325, 16);
             this.lblDolu.Name = "lblDolu";
-            this.lblDolu.Size = new System.Drawing.Size(31, 19);
+            this.lblDolu.Size = new System.Drawing.Size(80, 19);
             this.lblDolu.TabIndex = 6;
-            this.lblDolu.Text = "Dolu";
+            this.lblDolu.Text = "Uygun Değil";
             // 
             // MasaListesiForm
             // 

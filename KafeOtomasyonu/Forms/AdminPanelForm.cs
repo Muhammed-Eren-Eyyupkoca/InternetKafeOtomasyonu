@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using KafeOtomasyonu.Helpers;
@@ -20,11 +21,274 @@ namespace KafeOtomasyonu.Forms
             // Admin bilgilerini göster
             lblHosgeldin.Text = $"Hoş geldiniz, {SessionManager.GetCurrentAdminName()}";
             
+            // Grid'leri özelleştir
+            GridStiliniAyarla(gridViewKullanicilar);
+            GridStiliniAyarla(gridViewMasalar);
+            GridStiliniAyarla(gridViewRandevular);
+            
+            // Dashboard kartlarını güncelle
+            GuncelleDashboard();
+            
             // İlk sekmeyi yükle
             YukleKullanicilar();
             
             // Sekme değişikliği event'ini bağla
             xtraTabControl1.SelectedPageChanged += XtraTabControl1_SelectedPageChanged;
+        }
+        
+        /// <summary>
+        /// Grid stilini ayarla - Zebra desen ve büyük font
+        /// </summary>
+        private void GridStiliniAyarla(DevExpress.XtraGrid.Views.Grid.GridView gridView)
+        {
+            // Satır yüksekliği
+            gridView.RowHeight = 35;
+            
+            // Font ayarları
+            gridView.Appearance.Row.Font = new System.Drawing.Font("Segoe UI", 11F);
+            gridView.Appearance.Row.Options.UseFont = true;
+            
+            // Header font
+            gridView.Appearance.HeaderPanel.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            gridView.Appearance.HeaderPanel.Options.UseFont = true;
+            gridView.Appearance.HeaderPanel.BackColor = System.Drawing.ColorTranslator.FromHtml("#2b80c8");
+            gridView.Appearance.HeaderPanel.ForeColor = System.Drawing.Color.White;
+            gridView.Appearance.HeaderPanel.Options.UseBackColor = true;
+            gridView.Appearance.HeaderPanel.Options.UseForeColor = true;
+            
+            // Zebra deseni - Çift satırlar
+            gridView.Appearance.EvenRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#f8f9fa");
+            gridView.Appearance.EvenRow.Options.UseBackColor = true;
+            
+            // Zebra deseni - Tek satırlar
+            gridView.Appearance.OddRow.BackColor = System.Drawing.Color.White;
+            gridView.Appearance.OddRow.Options.UseBackColor = true;
+            
+            // Zebra desenini aktif et
+            gridView.OptionsView.EnableAppearanceEvenRow = true;
+            gridView.OptionsView.EnableAppearanceOddRow = true;
+            
+            // Seçili satır rengi
+            gridView.Appearance.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#cce5ff");
+            gridView.Appearance.FocusedRow.ForeColor = System.Drawing.Color.Black;
+            gridView.Appearance.FocusedRow.Options.UseBackColor = true;
+            gridView.Appearance.FocusedRow.Options.UseForeColor = true;
+            
+            // Grid ayarları
+            gridView.OptionsView.ColumnAutoWidth = false;
+            gridView.OptionsView.ShowGroupPanel = false; // Grup panelini kapat
+            
+            // Sütunları optimize et
+            gridView.BestFitColumns();
+        }
+        
+        /// <summary>
+        /// Masa grid'i için özel sütun genişlikleri
+        /// </summary>
+        private void MasaGridSutunlariAyarla()
+        {
+            // Önce BestFit yap
+            gridViewMasalar.BestFitColumns();
+            
+            // Sonra belirli sütunları genişlet
+            foreach (DevExpress.XtraGrid.Columns.GridColumn col in gridViewMasalar.Columns)
+            {
+                switch (col.FieldName)
+                {
+                    case "Aciklama":
+                        col.Width = 200;
+                        col.Caption = "📝 Açıklama";
+                        break;
+                    case "PCOzellikleri":
+                        col.Width = 250;
+                        col.Caption = "💻 PC Özellikleri";
+                        break;
+                    case "MasaAdi":
+                        col.Width = 120;
+                        col.Caption = "🎮 Masa Adı";
+                        break;
+                    case "MasaNo":
+                        col.Width = 80;
+                        col.Caption = "No";
+                        break;
+                    case "MasaID":
+                        col.Width = 60;
+                        col.Caption = "ID";
+                        break;
+                    case "SaatlikUcret":
+                        col.Width = 100;
+                        col.Caption = "💰 Ücret";
+                        col.DisplayFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
+                        col.DisplayFormat.FormatString = "{0:C}";
+                        break;
+                    case "Durum":
+                        col.Width = 90;
+                        col.Caption = "📊 Durum";
+                        break;
+                    case "Aktif":
+                        col.Width = 60;
+                        col.Caption = "✅";
+                        break;
+                    case "OlusturmaTarihi":
+                        col.Width = 110;
+                        col.Caption = "📅 Tarih";
+                        col.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+                        col.DisplayFormat.FormatString = "dd.MM.yyyy";
+                        break;
+                    case "PuanOrtalamasi":
+                        col.Width = 80;
+                        col.Caption = "⭐ Puan";
+                        break;
+                    case "ToplamPuanSayisi":
+                        col.Width = 80;
+                        col.Caption = "🔢 Oy";
+                        break;
+                    case "ResimYolu":
+                        col.Visible = false; // Resim yolunu gizle
+                        break;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Kullanıcı grid'i için özel sütun genişlikleri
+        /// </summary>
+        private void KullaniciGridSutunlariAyarla()
+        {
+            gridViewKullanicilar.BestFitColumns();
+            
+            foreach (DevExpress.XtraGrid.Columns.GridColumn col in gridViewKullanicilar.Columns)
+            {
+                switch (col.FieldName)
+                {
+                    case "KullaniciID":
+                        col.Width = 60;
+                        col.Caption = "ID";
+                        break;
+                    case "KullaniciAdi":
+                        col.Width = 150;
+                        col.Caption = "👤 Kullanıcı Adı";
+                        break;
+                    case "Email":
+                        col.Width = 200;
+                        col.Caption = "📧 E-posta";
+                        break;
+                    case "Telefon":
+                        col.Width = 130;
+                        col.Caption = "📱 Telefon";
+                        break;
+                    case "KayitTarihi":
+                        col.Width = 110;
+                        col.Caption = "📅 Kayıt Tarihi";
+                        col.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+                        col.DisplayFormat.FormatString = "dd.MM.yyyy";
+                        break;
+                    case "Aktif":
+                        col.Width = 70;
+                        col.Caption = "✅ Aktif";
+                        break;
+                    case "Sifre":
+                        col.Visible = false; // Şifreyi gizle
+                        break;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Randevu grid'i için özel sütun genişlikleri
+        /// </summary>
+        private void RandevuGridSutunlariAyarla()
+        {
+            gridViewRandevular.BestFitColumns();
+            
+            foreach (DevExpress.XtraGrid.Columns.GridColumn col in gridViewRandevular.Columns)
+            {
+                switch (col.FieldName)
+                {
+                    case "RandevuID":
+                        col.Width = 60;
+                        col.Caption = "ID";
+                        break;
+                    case "KullaniciID":
+                        col.Width = 80;
+                        col.Caption = "👤 K.ID";
+                        break;
+                    case "MasaID":
+                        col.Width = 80;
+                        col.Caption = "🎮 M.ID";
+                        break;
+                    case "RandevuTarihi":
+                        col.Width = 110;
+                        col.Caption = "📅 Tarih";
+                        col.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+                        col.DisplayFormat.FormatString = "dd.MM.yyyy";
+                        break;
+                    case "BaslangicSaati":
+                        col.Width = 100;
+                        col.Caption = "⏰ Başlangıç";
+                        break;
+                    case "BitisSaati":
+                        col.Width = 100;
+                        col.Caption = "⏰ Bitiş";
+                        break;
+                    case "Durum":
+                        col.Width = 100;
+                        col.Caption = "📊 Durum";
+                        break;
+                    case "ToplamUcret":
+                        col.Width = 100;
+                        col.Caption = "💰 Ücret";
+                        col.DisplayFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
+                        col.DisplayFormat.FormatString = "{0:C}";
+                        break;
+                    case "OlusturmaTarihi":
+                        col.Width = 110;
+                        col.Caption = "📝 Oluşturma";
+                        col.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+                        col.DisplayFormat.FormatString = "dd.MM.yyyy";
+                        break;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Dashboard kartlarını güncelle
+        /// </summary>
+        private void GuncelleDashboard()
+        {
+            try
+            {
+                var kullaniciRepo = new Data.KullaniciRepository();
+                var masaRepo = new Data.MasaRepository();
+                var randevuRepo = new Data.RandevuRepository();
+                
+                // Toplam kullanıcı sayısı
+                var kullanicilar = kullaniciRepo.GetAll();
+                lblKullaniciSayi.Text = kullanicilar.Count.ToString();
+                
+                // Aktif masa sayısı
+                var masalar = masaRepo.GetAll();
+                lblMasaSayi.Text = masalar.Count.ToString();
+                
+                // Bugünkü randevu sayısı
+                var tumRandevular = randevuRepo.GetAll();
+                var bugunRandevular = tumRandevular.Where(r => r.RandevuTarihi.Date == DateTime.Today).ToList();
+                lblRandevuSayi.Text = bugunRandevular.Count.ToString();
+                
+                // Bugünkü toplam gelir
+                decimal bugunGelir = bugunRandevular
+                    .Where(r => r.Durum == "Onaylandi" || r.Durum == "Tamamlandi")
+                    .Sum(r => r.ToplamUcret);
+                lblGelirSayi.Text = $"₺{bugunGelir:N0}";
+            }
+            catch (Exception)
+            {
+                // Hata durumunda varsayılan değerler
+                lblKullaniciSayi.Text = "0";
+                lblMasaSayi.Text = "0";
+                lblRandevuSayi.Text = "0";
+                lblGelirSayi.Text = "₺0";
+            }
         }
 
         /// <summary>
@@ -56,6 +320,9 @@ namespace KafeOtomasyonu.Forms
         {
             var repo = new Data.KullaniciRepository();
             gridControlKullanicilar.DataSource = repo.GetAll();
+            
+            // Sütun genişliklerini ayarla
+            KullaniciGridSutunlariAyarla();
         }
 
         /// <summary>
@@ -65,6 +332,9 @@ namespace KafeOtomasyonu.Forms
         {
             var repo = new Data.MasaRepository();
             gridControlMasalar.DataSource = repo.GetAll();
+            
+            // Sütun genişliklerini ayarla
+            MasaGridSutunlariAyarla();
         }
 
         /// <summary>
@@ -74,6 +344,9 @@ namespace KafeOtomasyonu.Forms
         {
             var repo = new Data.RandevuRepository();
             gridControlRandevular.DataSource = repo.GetAll();
+            
+            // Sütun genişliklerini ayarla
+            RandevuGridSutunlariAyarla();
         }
 
         /// <summary>

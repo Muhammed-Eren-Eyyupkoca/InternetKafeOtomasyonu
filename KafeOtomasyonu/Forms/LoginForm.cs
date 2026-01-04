@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.IO;
 using System.Windows.Forms;
 using DevExpress.XtraEditors;
 using KafeOtomasyonu.Data;
@@ -11,6 +14,17 @@ namespace KafeOtomasyonu.Forms
     {
         private readonly KullaniciRepository _kullaniciRepository;
         private readonly AdminRepository _adminRepository;
+        private List<Image> _gameLogos;
+        private Image _cachedBackground;
+        
+        // Animasyon değişkenleri
+        private Button btnShowLogin;
+        private Timer dropAnimationTimer;
+        private int currentPanelY;
+        private int targetPanelY;
+        private int ropeLength;
+        private bool isAnimating = false;
+        private bool isPanelVisible = false;
 
         public LoginForm()
         {
@@ -25,9 +39,333 @@ namespace KafeOtomasyonu.Forms
             this.MaximizeBox = true;
             this.MinimizeBox = true;
             this.WindowState = FormWindowState.Maximized; // Tam ekran başlat
+            this.DoubleBuffered = true;
             
             // Vintage Renk Şeması
             this.BackColor = ColorTranslator.FromHtml("#151629"); // Dark vintage lacivert
+            
+            // Oyun logolarını yükle
+            LoadGameLogos();
+            
+            // Animasyon butonunu oluştur
+            CreateShowLoginButton();
+            
+            // Animasyon timer'ı
+            dropAnimationTimer = new Timer();
+            dropAnimationTimer.Interval = 12;
+            dropAnimationTimer.Tick += DropAnimationTimer_Tick;
+        }
+
+        private void CreateShowLoginButton()
+        {
+            btnShowLogin = new Button
+            {
+                Text = "🎮 GİRİŞ YAP",
+                Size = new Size(220, 60),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.FromArgb(43, 128, 200),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            btnShowLogin.FlatAppearance.BorderSize = 0;
+            btnShowLogin.Click += BtnShowLogin_Click;
+            this.Controls.Add(btnShowLogin);
+            btnShowLogin.BringToFront();
+        }
+
+        private void BtnShowLogin_Click(object sender, EventArgs e)
+        {
+            if (isAnimating) return;
+            
+            // Butonu gizle
+            btnShowLogin.Visible = false;
+            
+            // Panel animasyonunu başlat
+            StartDropAnimation();
+        }
+
+        private void StartDropAnimation()
+        {
+            isAnimating = true;
+            isPanelVisible = true;
+            
+            // Panel başlangıç pozisyonu (ekranın üstünde)
+            currentPanelY = -panelContainer.Height - 50;
+            ropeLength = 0;
+            
+            // Hedef pozisyon (ekranın ortası)
+            targetPanelY = (this.ClientSize.Height - panelContainer.Height) / 2;
+            
+            // Paneli görünür yap ve pozisyonla
+            panelContainer.Visible = true;
+            panelContainer.Location = new Point(
+                (this.ClientSize.Width - panelContainer.Width) / 2,
+                currentPanelY
+            );
+            
+            dropAnimationTimer.Start();
+        }
+
+        private void DropAnimationTimer_Tick(object sender, EventArgs e)
+        {
+            // Yavaşlayan animasyon (easing)
+            int distance = targetPanelY - currentPanelY;
+            int step = Math.Max(4, distance / 8);
+            
+            currentPanelY += step;
+            ropeLength = currentPanelY + panelContainer.Height / 2 + 50;
+            
+            if (currentPanelY >= targetPanelY)
+            {
+                currentPanelY = targetPanelY;
+                ropeLength = targetPanelY + panelContainer.Height / 2 + 50;
+                dropAnimationTimer.Stop();
+                isAnimating = false;
+                
+                // Input'a odaklan
+                if (Properties.Settings.Default.RememberMe && !string.IsNullOrEmpty(txtKullaniciAdi.Text))
+                    txtSifre.Focus();
+                else
+                    txtKullaniciAdi.Focus();
+            }
+            
+            // Panel pozisyonunu güncelle
+            panelContainer.Location = new Point(
+                (this.ClientSize.Width - panelContainer.Width) / 2,
+                currentPanelY
+            );
+            
+            // İpi çizmek için formu yeniden çiz
+            this.Invalidate();
+        }
+
+        private void LoadGameLogos()
+        {
+            _gameLogos = new List<Image>();
+            try
+            {
+                string logosPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "GameLogos");
+                if (Directory.Exists(logosPath))
+                {
+                    string[] imageFiles = Directory.GetFiles(logosPath, "*.*");
+                    foreach (string file in imageFiles)
+                    {
+                        string ext = Path.GetExtension(file).ToLower();
+                        if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp")
+                        {
+                            try
+                            {
+                                Image img = Image.FromFile(file);
+                                _gameLogos.Add(img);
+                            }
+                            catch { }
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            
+            if (_gameLogos != null && _gameLogos.Count > 0)
+            {
+                // Cache'lenmiş arka plan yoksa veya boyut değiştiyse yeniden oluştur
+                if (_cachedBackground == null || _cachedBackground.Width != this.Width || _cachedBackground.Height != this.Height)
+                {
+                    _cachedBackground?.Dispose();
+                    _cachedBackground = CreateGameLogosBackground();
+                }
+                
+                if (_cachedBackground != null)
+                {
+                    e.Graphics.DrawImage(_cachedBackground, 0, 0);
+                }
+            }
+            
+            // İpi çiz (panel görünürse)
+            if (isPanelVisible && ropeLength > 0)
+            {
+                DrawRope(e.Graphics);
+            }
+        }
+
+        private void DrawRope(Graphics g)
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            
+            int ropeX = this.ClientSize.Width / 2;
+            int ropeStartY = 0;
+            int ropeEndY = Math.Min(ropeLength, currentPanelY + 10);
+            
+            // İp gölgesi
+            using (Pen shadowPen = new Pen(Color.FromArgb(80, 0, 0, 0), 6))
+            {
+                g.DrawLine(shadowPen, ropeX + 2, ropeStartY, ropeX + 2, ropeEndY + 2);
+            }
+            
+            // Ana ip (kalın kahverengi halat)
+            using (Pen ropePen = new Pen(Color.FromArgb(139, 90, 43), 4))
+            {
+                g.DrawLine(ropePen, ropeX, ropeStartY, ropeX, ropeEndY);
+            }
+            
+            // İp detayları (çizgiler)
+            using (Pen detailPen = new Pen(Color.FromArgb(100, 60, 30), 1))
+            {
+                for (int y = ropeStartY; y < ropeEndY; y += 15)
+                {
+                    g.DrawLine(detailPen, ropeX - 2, y, ropeX + 2, y + 8);
+                }
+            }
+            
+            // Üst bağlantı noktası (kanca)
+            using (SolidBrush hookBrush = new SolidBrush(Color.FromArgb(169, 169, 169)))
+            {
+                g.FillEllipse(hookBrush, ropeX - 8, ropeStartY - 5, 16, 16);
+            }
+            using (Pen hookPen = new Pen(Color.FromArgb(105, 105, 105), 2))
+            {
+                g.DrawEllipse(hookPen, ropeX - 8, ropeStartY - 5, 16, 16);
+            }
+            
+            // Alt bağlantı noktası (panele bağlı)
+            if (ropeEndY > 10)
+            {
+                using (SolidBrush connectorBrush = new SolidBrush(Color.FromArgb(169, 169, 169)))
+                {
+                    g.FillEllipse(connectorBrush, ropeX - 6, ropeEndY - 3, 12, 12);
+                }
+            }
+        }
+
+        private Image CreateGameLogosBackground()
+        {
+            if (_gameLogos == null || _gameLogos.Count == 0)
+                return null;
+
+            Bitmap background = new Bitmap(this.Width, this.Height);
+            using (Graphics g = Graphics.FromImage(background))
+            {
+                // Arka plan rengini doldur
+                Color bgColor = ColorTranslator.FromHtml("#151629");
+                g.Clear(bgColor);
+                
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.SmoothingMode = SmoothingMode.HighQuality;
+
+                // Grid hesaplama - 5 sütun x 3 satır
+                int columns = 5;
+                int rows = 3;
+                int tileWidth = this.Width / columns;
+                int tileHeight = this.Height / rows;
+                int tileSize = Math.Min(tileWidth, tileHeight); // Kare için
+
+                // Logoları ortala
+                int startX = (this.Width - (columns * tileSize)) / 2;
+                int startY = (this.Height - (rows * tileSize)) / 2;
+
+                int logoIndex = 0;
+                for (int row = 0; row < rows; row++)
+                {
+                    for (int col = 0; col < columns; col++)
+                    {
+                        int x = startX + col * tileSize;
+                        int y = startY + row * tileSize;
+
+                        // Logo seç (döngüsel)
+                        Image logo = _gameLogos[logoIndex % _gameLogos.Count];
+                        logoIndex++;
+
+                        // Logoyu kare olarak crop et ve çiz
+                        DrawSquareCroppedImage(g, logo, x, y, tileSize);
+                    }
+                }
+
+                // Üzerine yarı saydam koyu overlay (login kartı belirgin olsun)
+                using (SolidBrush overlayBrush = new SolidBrush(Color.FromArgb(180, 21, 22, 41)))
+                {
+                    g.FillRectangle(overlayBrush, 0, 0, this.Width, this.Height);
+                }
+
+                // Kenar çizgileri (grid efekti için)
+                using (Pen gridPen = new Pen(Color.FromArgb(40, 255, 255, 255), 2))
+                {
+                    for (int col = 0; col <= columns; col++)
+                    {
+                        int x = startX + col * tileSize;
+                        g.DrawLine(gridPen, x, startY, x, startY + rows * tileSize);
+                    }
+                    for (int row = 0; row <= rows; row++)
+                    {
+                        int y = startY + row * tileSize;
+                        g.DrawLine(gridPen, startX, y, startX + columns * tileSize, y);
+                    }
+                }
+            }
+
+            return background;
+        }
+
+        private void DrawSquareCroppedImage(Graphics g, Image source, int x, int y, int size)
+        {
+            // Resmi kare olarak ortadan crop et
+            int srcSize = Math.Min(source.Width, source.Height);
+            int srcX = (source.Width - srcSize) / 2;
+            int srcY = (source.Height - srcSize) / 2;
+
+            Rectangle destRect = new Rectangle(x, y, size, size);
+            Rectangle srcRect = new Rectangle(srcX, srcY, srcSize, srcSize);
+
+            g.DrawImage(source, destRect, srcRect, GraphicsUnit.Pixel);
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            _cachedBackground?.Dispose();
+            _cachedBackground = null;
+            
+            // Butonu ortala
+            if (btnShowLogin != null && btnShowLogin.Visible)
+            {
+                btnShowLogin.Location = new Point(
+                    (this.ClientSize.Width - btnShowLogin.Width) / 2,
+                    (this.ClientSize.Height - btnShowLogin.Height) / 2
+                );
+            }
+            
+            // Eğer panel görünürse ve animasyon bittiyse ortala
+            if (panelContainer != null && panelContainer.Visible && !isAnimating)
+            {
+                targetPanelY = (this.ClientSize.Height - panelContainer.Height) / 2;
+                currentPanelY = targetPanelY;
+                ropeLength = targetPanelY + panelContainer.Height / 2 + 50;
+                panelContainer.Location = new Point(
+                    (this.ClientSize.Width - panelContainer.Width) / 2,
+                    targetPanelY
+                );
+            }
+            
+            this.Invalidate();
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            base.OnFormClosed(e);
+            // Temizlik
+            _cachedBackground?.Dispose();
+            if (_gameLogos != null)
+            {
+                foreach (var logo in _gameLogos)
+                {
+                    logo?.Dispose();
+                }
+                _gameLogos.Clear();
+            }
         }
 
         private void btnGirisYap_Click(object sender, EventArgs e)
@@ -277,22 +615,23 @@ namespace KafeOtomasyonu.Forms
             }
             catch { /* Sessizce geç */ }
 
-            // Paneli ekranın tam ortasına yerleştir
-            panelContainer.Location = new Point(
-                (this.ClientSize.Width - panelContainer.Width) / 2,
-                (this.ClientSize.Height - panelContainer.Height) / 2
+            // Başlangıçta paneli gizle
+            panelContainer.Visible = false;
+            isPanelVisible = false;
+            
+            // "Giriş Yap" butonunu ekranın ortasına yerleştir
+            btnShowLogin.Location = new Point(
+                (this.ClientSize.Width - btnShowLogin.Width) / 2,
+                (this.ClientSize.Height - btnShowLogin.Height) / 2
             );
+            btnShowLogin.Visible = true;
+            btnShowLogin.BringToFront();
 
             // Beni hatırla ayarı varsa kullanıcı adını doldur
             if (Properties.Settings.Default.RememberMe)
             {
                 txtKullaniciAdi.Text = Properties.Settings.Default.SavedUsername;
                 chkBeniHatirla.Checked = true;
-                txtSifre.Focus();
-            }
-            else
-            {
-                txtKullaniciAdi.Focus();
             }
 
             // Veritabanı bağlantı kontrolü

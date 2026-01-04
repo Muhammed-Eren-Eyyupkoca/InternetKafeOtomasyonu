@@ -353,6 +353,53 @@ cd KafeOtomasyonu
 
 ---
 
+## 📌 Ek Güncellemeler
+
+**Giriş Ekranı Yeniden Tasarlandı ve Animasyonlar Eklendi:**
+
+- **Oyun Logoları Arka Planı:**
+  - 5x3 grid formatında oyun logoları mozaiği
+  - Dinamik resim yükleme (Resources/GameLogos klasöründen)
+  - Otomatik kare crop ve ortalama
+  - Yarı saydam koyu overlay (login kartı belirgin olsun)
+  - İnce grid çizgileri ile modern görünüm
+  - Oyun logoları: COD, Valorant, Forza, Minecraft, F1, Witcher, CS2, EA Sports, PlayStation, LoL, Rockstar, FC26, RDR2, PUBG, GTA V
+
+- **İp Animasyonu ile Giriş Paneli:**
+  - Başlangıçta "🎮 GİRİŞ YAP" butonu ekranın ortasında
+  - Butona tıklayınca giriş paneli tavandan ip ile iniyor
+  - Kahverengi halat efekti (detaylı çizgilerle)
+  - Üstte metal kanca, altta bağlantı noktası
+  - Yavaşlayan animasyon (easing efekti)
+  - Panel ortaya gelince durur ve input'a odaklanır
+
+- **Masa Kartlarında Yıldız Puanı Düzeltildi:**
+  - Eski: Puanlar tablosundan (kullanılmıyordu)
+  - Yeni: Degerlendirmeler tablosundan gerçek puan ortalaması
+  - Masa seçim ekranında doğru yıldız gösterimi
+
+- **Masa Detay Sayfası Genişletildi:**
+  - Form boyutu: 750px → 950px
+  - Sol taraf: Kullanıcı yorumları (550px)
+  - Sağ taraf: PC Özellikleri paneli (320px)
+  - Masa tipi gösterimi: Standart / ⭐ Premium / 👑 VIP
+  - PC özellikleri: İşlemci, Ekran Kartı, RAM, Monitör
+  - Her özellik için ikon ve detaylı bilgi
+  - Koyu tema (dark premium) tasarım
+
+- **ChatBot Ekran Kayması:**
+  - ChatBot açıldığında masa paneli otomatik daralıyor
+  - Sağ taraftaki masalar (21-25) yeniden konumlanıyor
+  - ChatBot kapandığında eski haline dönüyor
+  - Akıcı animasyon efekti
+
+- **Hata Düzeltmeleri:**
+  - MasaDetayForm'da duplicate butonlar kaldırıldı
+  - Designer dosyası temizlendi
+  - Form boyutları optimize edildi
+
+---
+
 **Geliştirici:** Muhammed Eren Eyyüpkoca
 
 ---

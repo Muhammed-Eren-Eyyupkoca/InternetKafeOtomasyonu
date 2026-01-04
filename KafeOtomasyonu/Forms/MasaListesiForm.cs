@@ -70,8 +70,12 @@ namespace KafeOtomasyonu.Forms
             animationTimer.Interval = 10;
             animationTimer.Tick += AnimationTimer_Tick;
 
-            // Buton pozisyonunu ayarla
-            this.Resize += (s, e) => UpdateChatBotButtonPosition();
+            // Buton ve panel pozisyonunu ayarla
+            this.Resize += (s, e) => 
+            {
+                UpdateChatBotButtonPosition();
+                UpdateMasaPanelWidth();
+            };
         }
 
         private void UpdateChatBotButtonPosition()
@@ -142,7 +146,53 @@ namespace KafeOtomasyonu.Forms
                 }
             }
 
+            // Masa panelini ChatBot genişliğine göre ayarla (sola kayma efekti)
+            UpdateMasaPanelWidth();
             UpdateChatBotButtonPosition();
+        }
+
+        private void UpdateMasaPanelWidth()
+        {
+            if (panelMasalar != null)
+            {
+                // ChatBot açıkken masa paneli daralır
+                int chatBotWidth = chatBotPanel.Visible ? chatBotPanel.Width : 0;
+                int newWidth = this.ClientSize.Width - chatBotWidth;
+                
+                if (panelMasalar.Width != newWidth)
+                {
+                    panelMasalar.Width = newWidth;
+                    // Masaları yeniden konumlandır
+                    MasaPanelleriniYenidenKonumlandir();
+                }
+            }
+        }
+
+        private void MasaPanelleriniYenidenKonumlandir()
+        {
+            if (_masalar == null || _masalar.Count < 25) return;
+
+            int panelGenislik = 140;
+            int panelYukseklik = 120;
+            int bosluk = 15;
+
+            // Sağ taraftaki masaların X konumunu güncelle
+            int sagX = panelMasalar.Width - panelGenislik - 20;
+            int ortaBaslangicY = (panelMasalar.Height - (5 * panelYukseklik + 4 * bosluk)) / 2;
+
+            foreach (Control ctrl in panelMasalar.Controls)
+            {
+                if (ctrl is Panel panel && panel.Tag is Masa masa)
+                {
+                    int masaIndex = _masalar.FindIndex(m => m.MasaID == masa.MasaID);
+                    
+                    // Sağ taraftaki masalar (20-24 indeks)
+                    if (masaIndex >= 20 && masaIndex < 25)
+                    {
+                        panel.Location = new Point(sagX, ortaBaslangicY + ((masaIndex - 20) * (panelYukseklik + bosluk)));
+                    }
+                }
+            }
         }
         
         private void MasaListesiForm_Load(object sender, EventArgs e)
@@ -152,6 +202,12 @@ namespace KafeOtomasyonu.Forms
             MasaFiyatlariniGuncelle(); // Fiyatları güncelle
             MasaPanelleriniOlustur();
             UpdateChatBotButtonPosition();
+            
+            // ChatBot panel yüksekliğini ayarla
+            if (chatBotPanel != null)
+            {
+                chatBotPanel.Height = this.ClientSize.Height;
+            }
         }
         
         private void MasaFiyatlariniGuncelle()

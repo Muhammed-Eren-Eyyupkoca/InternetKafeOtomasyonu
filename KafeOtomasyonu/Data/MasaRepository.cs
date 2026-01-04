@@ -13,15 +13,15 @@ namespace KafeOtomasyonu.Data
     public class MasaRepository
     {
         /// <summary>
-        /// Tüm masaları getir (puan ortalaması ile)
+        /// Tüm masaları getir (puan ortalaması ile - Degerlendirmeler tablosundan)
         /// </summary>
         public List<Masa> GetAll()
         {
             string query = @"SELECT m.*, 
-                           ISNULL(AVG(CAST(p.Puan AS DECIMAL(3,2))), 0) AS PuanOrtalamasi,
-                           COUNT(p.PuanID) AS ToplamPuanSayisi
+                           ISNULL(AVG(CAST(d.Puan AS DECIMAL(3,2))), 0) AS PuanOrtalamasi,
+                           COUNT(d.DegerlendirmeID) AS ToplamPuanSayisi
                            FROM Masalar m
-                           LEFT JOIN Puanlar p ON m.MasaID = p.MasaID
+                           LEFT JOIN Degerlendirmeler d ON m.MasaID = d.MasaID
                            WHERE m.Aktif = 1
                            GROUP BY m.MasaID, m.MasaNo, m.MasaAdi, m.SaatlikUcret, 
                                     m.Durum, m.ResimYolu, m.Aciklama, m.PCOzellikleri, 
@@ -39,15 +39,15 @@ namespace KafeOtomasyonu.Data
         }
 
         /// <summary>
-        /// ID ile masa getir
+        /// ID ile masa getir (Degerlendirmeler tablosundan puan)
         /// </summary>
         public Masa GetById(int id)
         {
             string query = @"SELECT m.*, 
-                           ISNULL(AVG(CAST(p.Puan AS DECIMAL(3,2))), 0) AS PuanOrtalamasi,
-                           COUNT(p.PuanID) AS ToplamPuanSayisi
+                           ISNULL(AVG(CAST(d.Puan AS DECIMAL(3,2))), 0) AS PuanOrtalamasi,
+                           COUNT(d.DegerlendirmeID) AS ToplamPuanSayisi
                            FROM Masalar m
-                           LEFT JOIN Puanlar p ON m.MasaID = p.MasaID
+                           LEFT JOIN Degerlendirmeler d ON m.MasaID = d.MasaID
                            WHERE m.MasaID = @MasaID
                            GROUP BY m.MasaID, m.MasaNo, m.MasaAdi, m.SaatlikUcret, 
                                     m.Durum, m.ResimYolu, m.Aciklama, m.PCOzellikleri, 
@@ -90,15 +90,15 @@ namespace KafeOtomasyonu.Data
         }
 
         /// <summary>
-        /// Boş masaları getir
+        /// Boş masaları getir (Degerlendirmeler tablosundan puan)
         /// </summary>
         public List<Masa> GetBosMasalar()
         {
             string query = @"SELECT m.*, 
-                           ISNULL(AVG(CAST(p.Puan AS DECIMAL(3,2))), 0) AS PuanOrtalamasi,
-                           COUNT(p.PuanID) AS ToplamPuanSayisi
+                           ISNULL(AVG(CAST(d.Puan AS DECIMAL(3,2))), 0) AS PuanOrtalamasi,
+                           COUNT(d.DegerlendirmeID) AS ToplamPuanSayisi
                            FROM Masalar m
-                           LEFT JOIN Puanlar p ON m.MasaID = p.MasaID
+                           LEFT JOIN Degerlendirmeler d ON m.MasaID = d.MasaID
                            WHERE m.Aktif = 1 AND m.Durum = 'Bos'
                            GROUP BY m.MasaID, m.MasaNo, m.MasaAdi, m.SaatlikUcret, 
                                     m.Durum, m.ResimYolu, m.Aciklama, m.PCOzellikleri, 
